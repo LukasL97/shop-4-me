@@ -1,5 +1,7 @@
 import React, { Component } from 'react';
 
+import Login from './Login';
+
 var ReactRouter = require('react-router-dom');
 var Router = ReactRouter.BrowserRouter;
 var Route = ReactRouter.Route;
@@ -12,7 +14,8 @@ class App extends Component {
       <Router>
         <div className='container'>
           <Switch>
-            <Route exact path='/' component={Home} />
+            <Route exact path='/' component={Login} />
+            <Route exact path='/home' component={Home} />
             <Route render={
               function() {
                 return <p>Not found</p>
@@ -31,6 +34,17 @@ class Home extends Component {
     return (
       <div className='home'>
         <h1 className='home-header'>Shop-4-me</h1>
+        <div className='cards'>
+          <div className='card'>
+            <p>Card #1</p>
+          </div>
+          <div className='card'>
+            <p>Card #2</p>
+          </div>
+          <div className='card'>
+            <p>Card #3</p>
+          </div>
+        </div>
       </div>
     )
   }
