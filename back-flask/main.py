@@ -5,4 +5,4 @@ app = Flask(__name__)
 def hello_world():
     return 'Hello, World!'
 
-# Run with python -m flask run
+# Run with export FLASK_APP=main.py; python -m flask run
