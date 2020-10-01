@@ -1,23 +1,35 @@
 from unittest import TestCase
-from unittest.mock import MagicMock, Mock, patch
+from unittest.mock import Mock
+
+from bson import ObjectId
+from pymongo.database import Database
 
 from dao.users_dao import UsersDAO
-from model.exception import IncorrectPasswordError, UserNotFoundError
+from model.exception import IncorrectPasswordError, UserNotFoundError, UserAlreadyRegisteredError
 from model.user import User
+from test.mongodb_integration_test_setup import get_empty_local_test_db
 
 
 class UserTest(TestCase):
 
-    usersDAOMock = Mock(spec=UsersDAO)
+    dummy_db_user = {'login': {'name': 'name', 'passwordHash': 'pw'}, 'name': {'last': 'last', 'first': 'first'}}
+
+    db = get_empty_local_test_db(['DummyUser'])
 
     class DummyUser(User):
 
         @classmethod
         def get_dao(cls) -> UsersDAO:
-            return UserTest.usersDAOMock
+            return UserTest.DummyUsersDAO(UserTest.db)
+
+    class DummyUsersDAO(UsersDAO):
+
+        def __init__(self, db: Database):
+            super().__init__(db, 'DummyUser')
 
     def setUp(self):
-        UserTest.usersDAOMock.reset_mock()
+        UserTest.DummyUser.get_dao().clear()
+        UserTest.DummyUser.active_user_sessions.clear()
 
     def test_generate_different_session_ids(self):
         session_ids = []
@@ -27,10 +39,9 @@ class UserTest(TestCase):
         self.assertEqual(len(set(session_ids)), num_generated)
 
     def test_add_active_user_session(self):
-
-        user_1 = UserTest.DummyUser('name1', 'pw1')
-        user_2 = UserTest.DummyUser('name2', 'pw2')
-        user_3 = UserTest.DummyUser('name3', 'pw3')
+        user_1 = UserTest.DummyUser('name1', 'pw1', 'first', 'last')
+        user_2 = UserTest.DummyUser('name2', 'pw2', 'first', 'last')
+        user_3 = UserTest.DummyUser('name3', 'pw3', 'first', 'last')
         users = [user_1, user_2, user_3]
         session_ids = []
         for user in users:
@@ -39,18 +50,28 @@ class UserTest(TestCase):
             self.assertEqual(User.active_user_sessions[session_id], user)
 
     def test_login_with_correct_data(self):
-        UserTest.usersDAOMock.get_user_by_name.return_value = {'login': {'name': 'name', 'passwordHash': 'pw'}}
-        UserTest.DummyUser.login('name', 'pw')
-        UserTest.usersDAOMock.get_user_by_name.assert_called_once_with('name')
+        UserTest.DummyUser.get_dao().store_user(self.dummy_db_user)
+        session_id = UserTest.DummyUser.login('name', 'pw')
+        self.assertIn(session_id, UserTest.DummyUser.active_user_sessions)
 
     def test_login_with_wrong_password(self):
-        UserTest.usersDAOMock.get_user_by_name.return_value = {'login': {'name': 'name', 'passwordHash': 'pw'}}
+        UserTest.DummyUser.get_dao().store_user(self.dummy_db_user)
         with self.assertRaises(IncorrectPasswordError):
             UserTest.DummyUser.login('name', 'wrong_pw')
-        UserTest.usersDAOMock.get_user_by_name.assert_called_once_with('name')
+        self.assertEqual(len(UserTest.DummyUser.active_user_sessions), 0)
 
     def test_login_with_unknown_user(self):
-        UserTest.usersDAOMock.get_user_by_name.return_value = None
         with self.assertRaises(UserNotFoundError):
             UserTest.DummyUser.login('name', 'pw')
-        UserTest.usersDAOMock.get_user_by_name.assert_called_once_with('name')
+        self.assertEqual(len(UserTest.DummyUser.active_user_sessions), 0)
+
+    def test_registration_with_correct_data(self):
+        session_id = UserTest.DummyUser.register('name', 'pw', 'first', 'last')
+        self.assertIn(session_id, UserTest.DummyUser.active_user_sessions)
+
+    def test_registration_with_already_existing_user(self):
+        session_id = UserTest.DummyUser.register('name', 'pw', 'first', 'last')
+        self.assertIn(session_id, UserTest.DummyUser.active_user_sessions)
+        with self.assertRaises(UserAlreadyRegisteredError):
+            UserTest.DummyUser.register('name', 'pw', 'first', 'last')
+        self.assertEqual(len(UserTest.DummyUser.active_user_sessions), 1)
