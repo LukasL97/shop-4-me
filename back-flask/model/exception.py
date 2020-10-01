@@ -7,3 +7,6 @@ class IncorrectPasswordError(RuntimeError):
 
 class UnexpectedUserTypeError(RuntimeError):
     pass
+
+class UserAlreadyRegisteredError(RuntimeError):
+    pass
