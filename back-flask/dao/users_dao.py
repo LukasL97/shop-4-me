@@ -1,6 +1,7 @@
 from abc import ABC, abstractmethod
 from typing import Optional, Dict, Any
 
+from bson import ObjectId
 from pymongo.collection import Collection
 from pymongo.database import Database
 
@@ -12,8 +13,14 @@ class UsersDAO(object):
         self.db: Database = db
         self.collection: Collection = db.get_collection(collection_name)
 
-    def get_user_by_name(self, name: str) -> Optional[Dict[str, Any]]:
+    def get_user_by_login_name(self, name: str) -> Optional[Dict[str, Any]]:
         return self.collection.find_one({'login.name': name})
+
+    def store_user(self, user_dict: Dict[str, Any]) -> ObjectId:
+        return self.collection.insert_one(user_dict)
+
+    def clear(self) -> None:
+        self.collection.delete_many({})
 
 
 class RequestersDAO(UsersDAO):
