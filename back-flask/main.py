@@ -3,15 +3,15 @@ import os
 from flask import Flask
 
 from api.user import user
+from spec import get_spec_as_html
 
 app = Flask(__name__)
+
 app.register_blueprint(user)
 
-
 @app.route('/')
-def hello_world():
-    return 'Hello, World!'
-
+def get_api_spec():
+    return get_spec_as_html()
 
 if __name__ == '__main__':
     # for deployment
