@@ -52,7 +52,7 @@ class Home extends Component {
 
 function Footer(props) {
   return (
-    <footer>&copy; 2020 </footer>
+    <footer>&copy; 2020 -- Asabeneh, Lukas and Walter</footer>
   )
 }
 
