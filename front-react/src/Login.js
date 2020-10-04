@@ -1,3 +1,4 @@
+import axios from 'axios';
 import React from 'react';
 import Cookies from 'universal-cookie';
 
@@ -25,20 +26,22 @@ function LoginSignIn() {
 
     function handleSubmit(event) {
         event.preventDefault();
-        // TODO POST to backend
-
-        var callback = (data) => {
-            const cookies = new Cookies();
-            cookies.set('access_token', data.access_token, { path: '/', expires: data.expiry_time })
-            cookies.set('refresh_token', data.refresh_token, { path: '/' })
+        let data = {
+            userType: "requester",
+            loginName: event.target.email.value,
+            password: event.target.password.value
         }
-        callback({
-            access_token: "blah",
-            refresh_token: "blöh",
-            expiry_time: new Date(new Date().getTime() + 60 * 60 * 1000)
-        })
+        console.log(data);
 
-        //history.push('/home')
+        var callback = (res) => {
+            console.log(res)
+            const cookies = new Cookies();
+            cookies.set('access_token', res.access_token, { path: '/', expires: res.expiry_time })
+            cookies.set('refresh_token', res.refresh_token, { path: '/' })
+            //history.push('/home')
+        }
+
+        axios.post("http://localhost:5000", data).then(callback)
     }
 
     return (
