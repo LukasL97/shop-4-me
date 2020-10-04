@@ -2,6 +2,7 @@ import React, { Component } from 'react'
 import Login from './Login'
 import { BrowserRouter as Router, Route, Link, Switch } from 'react-router-dom'
 import Navbar from './components/Navbar'
+import Cards from './components/Cards'
 
 // var ReactRouter = require('react-router-dom');
 // var Router = ReactRouter.BrowserRouter;
@@ -33,6 +34,7 @@ class Home extends Component {
       <div className='home'>
         {/* <h1 className='home-header'>Shop-4-me</h1> */}
         <Navbar />
+        <Cards />
         <div className='cards'>
           <div className='card'>
             <p>Card #1</p>

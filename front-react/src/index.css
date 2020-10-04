@@ -1,19 +1,7 @@
-@import './assets/styles/common.css';
+@import './assets/styles/common.scss';
+@import './assets//styles//card.scss';
 body {
   margin: 0;
   padding: 0;
   font-family: sans-serif;
-}
-
-.cards {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
-  grid-auto-rows: auto;
-  grid-gap: 1rem;
-}
-
-.card {
-  border: 2px solid #e7e7e7;
-  border-radius: 4px;
-  padding: 0.5rem;
 }
