@@ -9,13 +9,13 @@ function Login() {
 
     return (
         <div className='login'>
-            <section class="section">
-                <h1 class="title">Welcome to <strong>Shop-4-Me</strong></h1>
-                <h2 class="title">Friendly neighborhood shopping assistant</h2>
+            <section className="section">
+                <h1 className="title">Welcome to <strong>Shop-4-Me</strong></h1>
+                <h2 className="title">Friendly neighborhood shopping assistant</h2>
                 <LoginUserTypeSelector />
                 <LoginSignIn />
             </section>
-            <section class="section">
+            <section className="section">
                 <LoginRegister />
             </section>
         </div>
@@ -50,7 +50,7 @@ function LoginSignIn() {
                 name="email" label="Email" type="email" placeholder="e.g. email@provider.com" required />
             <InputField
                 name="password" label="Password" type="password" placeholder="e.g. iSecretlyLove50Cent" required />
-            <button class="button is-link" type="submit">Login</button>
+            <button className="button is-link" type="submit">Login</button>
         </form>
     )
 }
@@ -88,8 +88,8 @@ function LoginRegister() {
 
 function InputField({name, label, type, placeholder, iconr, iconl, error_message, ok_message, required}) {
     var input_class =  error_message ? "is-danger" : ok_message ? "is-success" : ""
-    var below_text = error_message ? <p class="help is-danger">{error_message}</p> :
-                     ok_message ? <p class="help is-success">{ok_message}</p> :
+    var below_text = error_message ? <p className="help is-danger">{error_message}</p> :
+                     ok_message ? <p className="help is-success">{ok_message}</p> :
                      null
     var icon_container_class = ""
     var right_icon = null
@@ -97,25 +97,25 @@ function InputField({name, label, type, placeholder, iconr, iconl, error_message
     if (iconr) {
         icon_container_class += " has-icons-right"
         right_icon = (
-            <span class="icon is-small is-right">
-                <i class={"fas " + iconr}></i>
+            <span className="icon is-small is-right">
+                <i className={"fas " + iconr}></i>
             </span>
         )
     }
     if (iconl) {
         icon_container_class += " has-icons-left"
         left_icon = (
-            <span class="icon is-small is-left">
-                <i class={"fas " + iconl}></i>
+            <span className="icon is-small is-left">
+                <i className={"fas " + iconl}></i>
             </span>
         )
     }
     required = required ? true : false //cast to boolean
     return (
-        <div class="field">
-            <label for={name} class="label">{label}</label>
-            <div class={"control" + icon_container_class}>
-                <input name={name} class={"input " + input_class} type={type} placeholder={placeholder} required={required} />
+        <div className="field">
+            <label htmlFor={name} className="label">{label}</label>
+            <div className={"control" + icon_container_class}>
+                <input name={name} className={"input " + input_class} type={type} placeholder={placeholder} required={required} />
                 {left_icon}
                 {right_icon}
             </div>
@@ -144,16 +144,16 @@ function RegisterSharedUpper() {
 function RegisterSharedLower() {
     return (
         <div>
-            <div class="field">
-                <div class="control">
-                    <label class="checkbox">
+            <div className="field">
+                <div className="control">
+                    <label className="checkbox">
                         <input type="checkbox" /> I agree to the <a href="#">terms and conditions</a>
                     </label>
                 </div>
             </div>
-            <div class="field">
-                <div class="control">
-                    <button class="button is-link" type="submit">Register</button>
+            <div className="field">
+                <div className="control">
+                    <button className="button is-link" type="submit">Register</button>
                 </div>
             </div>
         </div>
@@ -206,10 +206,10 @@ function LoginUserTypeSelector() {
     let types = ['Volunteer', 'Requester', 'ShowOwner']
     let labels = ['Volunteer', 'Requester', 'Show owner']
     return (
-        <div class="field">
-          <label class="label">I am a...</label>
-          <div class="control">
-            <div class="select">
+        <div className="field">
+          <label className="label">I am a...</label>
+          <div className="control">
+            <div className="select">
               <select>
                 {types.map((type, idx) => <option key={type}>{labels[idx]}</option>)}
               </select>
