@@ -13,21 +13,21 @@ function Login() {
                 <h1 className="title">Welcome to <strong>Shop-4-Me</strong></h1>
                 <h2 className="title">Friendly neighborhood shopping assistant</h2>
                 <LoginUserTypeSelector />
-                <LoginSignIn />
+                <LoginSignIn history={history} />
             </section>
             <section className="section">
-                <LoginRegister />
+                <LoginRegister history={history} />
             </section>
         </div>
     )
 }
 
-function LoginSignIn() {
+function LoginSignIn({ history }) {
 
     function handleSubmit(event) {
         event.preventDefault();
         let data = {
-            userType: "requester",
+            userType: event.target.usertype.value,
             loginName: event.target.email.value,
             password: event.target.password.value
         }
@@ -38,7 +38,7 @@ function LoginSignIn() {
             const cookies = new Cookies();
             cookies.set('access_token', res.access_token, { path: '/', expires: res.expiry_time })
             cookies.set('refresh_token', res.refresh_token, { path: '/' })
-            //history.push('/home')
+            history.push('/home')
         }
 
         axios.post("http://localhost:5000", data).then(callback)
@@ -46,16 +46,19 @@ function LoginSignIn() {
 
     return (
         <form onSubmit={handleSubmit}>
+            <input type="hidden" name="usertype" value="requester" />
             <InputField
-                name="email" label="Email" type="email" placeholder="e.g. email@provider.com" required />
+                name="email" label="Email" type="email" placeholder="e.g. email@provider.com"
+                iconl="fa-envelope" required />
             <InputField
-                name="password" label="Password" type="password" placeholder="e.g. iSecretlyLove50Cent" required />
+                name="password" label="Password" type="password" placeholder="e.g. iSecretlyLove50Cent"
+                iconl="fa-key" required />
             <button className="button is-link" type="submit">Login</button>
         </form>
     )
 }
 
-function LoginRegister() {
+function LoginRegister({ history }) {
 
     function handleSubmit(event) {
         event.preventDefault();
@@ -72,8 +75,7 @@ function LoginRegister() {
             expiry_time: new Date(new Date().getTime() + 60 * 60 * 1000)
         })
 
-        //history.push('/home')
-        //use <Redirect>
+        history.push('/home')
     }
 
     let component = RegisterRequester()
@@ -128,15 +130,17 @@ function RegisterSharedUpper() {
     return (
         <div>
             <InputField
-                name="firstname" label="First name" type="text" placeholder="Firsty" required />
+                name="firstname" label="First name" type="text" placeholder="Firsty"
+                iconl="fa-user" required />
             <InputField
-                name="lastname" label="Last name" type="text" placeholder="Lastnamersson" required />
+                name="lastname" label="Last name" type="text" placeholder="Lastnamersson"
+                iconl="fa-user" required />
             <InputField
                 name="email" label="Email" type="email" placeholder="e.g. email@provider.com"
                 iconl="fa-envelope" iconr="fa-check" ok_message="This username is available" required />
             <InputField
                 name="password" label="Password" type="password" placeholder="e.g. something614SortaSecure"
-                iconl="fa-user" error_message="Password is too short!" required />
+                iconl="fa-key" iconr="fa-times-circle" error_message="Password is too short!" required />
         </div>
     )
 }
@@ -164,9 +168,11 @@ function AddressPart() {
     return (
         <div>
             <InputField
-                name="address" label="Street address" type="text" placeholder="e.g. Kyläsaarenkuja 5 B" required />
+                name="address" label="Street address" type="text" placeholder="e.g. Kyläsaarenkuja 5 B"
+                iconl="fa-map-marker-alt" required />
             <InputField
-                name="zip" label="ZIP Code" type="number" placeholder="e.g. 00220" required />
+                name="zip" label="ZIP Code" type="number" placeholder="e.g. 00220"
+                iconl="fa-map-marker-alt" required />
         </div>
     )
 }
