@@ -8,10 +8,15 @@ function Login() {
 
     return (
         <div className='login'>
-            <h1>Welcome! Please log in</h1>
-            <LoginUserTypeSelector />
-            <LoginSignIn />
-            <LoginRegister />
+            <section class="section">
+                <h1 class="title">Welcome to <strong>Shop-4-Me</strong></h1>
+                <h2 class="title">Friendly neighborhood shopping assistant</h2>
+                <LoginUserTypeSelector />
+                <LoginSignIn />
+            </section>
+            <section class="section">
+                <LoginRegister />
+            </section>
         </div>
     )
 }
@@ -38,13 +43,11 @@ function LoginSignIn() {
 
     return (
         <form onSubmit={handleSubmit}>
-            <label for="username"><b>Username</b></label>
-            <input type="text" placeholder="Enter Username" name="username" required></input>
-            <br />
-            <label for="password"><b>Password</b></label>
-            <input type="password" placeholder="Enter Password" name="password" required></input>
-            <br />
-            <button type="submit">Login</button>
+            <InputField
+                name="email" label="Email" type="email" placeholder="e.g. email@provider.com" required />
+            <InputField
+                name="password" label="Password" type="password" placeholder="e.g. iSecretlyLove50Cent" required />
+            <button class="button is-link" type="submit">Login</button>
         </form>
     )
 }
@@ -80,20 +83,76 @@ function LoginRegister() {
 
 }
 
-function RegisterShared() {
+function InputField({name, label, type, placeholder, iconr, iconl, error_message, ok_message, required}) {
+    var input_class =  error_message ? "is-danger" : ok_message ? "is-success" : ""
+    var below_text = error_message ? <p class="help is-danger">{error_message}</p> :
+                     ok_message ? <p class="help is-success">{ok_message}</p> :
+                     null
+    var icon_container_class = ""
+    var right_icon = null
+    var left_icon = null
+    if (iconr) {
+        icon_container_class += " has-icons-right"
+        right_icon = (
+            <span class="icon is-small is-right">
+                <i class={"fas " + iconr}></i>
+            </span>
+        )
+    }
+    if (iconl) {
+        icon_container_class += " has-icons-left"
+        left_icon = (
+            <span class="icon is-small is-left">
+                <i class={"fas " + iconl}></i>
+            </span>
+        )
+    }
+    required = required ? true : false //cast to boolean
+    return (
+        <div class="field">
+            <label for={name} class="label">{label}</label>
+            <div class={"control" + icon_container_class}>
+                <input name={name} class={"input " + input_class} type={type} placeholder={placeholder} required={required} />
+                {left_icon}
+                {right_icon}
+            </div>
+            {below_text}
+        </div>
+    )
+}
+
+function RegisterSharedUpper() {
     return (
         <div>
-            <label for="firstname"><b>First name</b></label>
-            <input type="text" placeholder="Firsty" name="firstname" required></input>
-            <br />
-            <label for="lastname"><b>Last name</b></label>
-            <input type="text" placeholder="Lastnamersson" name="lastname" required></input>
-            <br />
-            <label for="email"><b>Email</b></label>
-            <input type="text" placeholder="email@provider.com" name="email" required></input>
-            <br />
-            <label for="password"><b>Password</b></label>
-            <input type="password" placeholder="e.g. something614SortaSecure" name="password" required></input>
+            <InputField
+                name="firstname" label="First name" type="text" placeholder="Firsty" required />
+            <InputField
+                name="lastname" label="Last name" type="text" placeholder="Lastnamersson" required />
+            <InputField
+                name="email" label="Email" type="email" placeholder="e.g. email@provider.com"
+                iconl="fa-envelope" iconr="fa-check" ok_message="This username is available" required />
+            <InputField
+                name="password" label="Password" type="password" placeholder="e.g. something614SortaSecure"
+                iconl="fa-user" error_message="Password is too short!" required />
+        </div>
+    )
+}
+
+function RegisterSharedLower() {
+    return (
+        <div>
+            <div class="field">
+                <div class="control">
+                    <label class="checkbox">
+                        <input type="checkbox" /> I agree to the <a href="#">terms and conditions</a>
+                    </label>
+                </div>
+            </div>
+            <div class="field">
+                <div class="control">
+                    <button class="button is-link" type="submit">Register</button>
+                </div>
+            </div>
         </div>
     )
 }
@@ -101,10 +160,10 @@ function RegisterShared() {
 function AddressPart() {
     return (
         <div>
-            <label for="address"><b>Street address</b></label>
-            <input type="text" placeholder="e.g. Kyläsaarenkuja 5 B" name="address" required></input>
-            <label for="zip"><b>ZIP Code</b></label>
-            <input type="text" placeholder="e.g. 00220" name="zip" required></input>
+            <InputField
+                name="address" label="Street address" type="text" placeholder="e.g. Kyläsaarenkuja 5 B" required />
+            <InputField
+                name="zip" label="ZIP Code" type="number" placeholder="e.g. 00220" required />
         </div>
     )
 }
@@ -113,10 +172,9 @@ function RegisterRequester() {
     return (
         <form>
             <input type="hidden" name="usertype" value="requester" />
-            <RegisterShared />
+            <RegisterSharedUpper />
             <AddressPart />
-            <button type="register">Register</button>
-            <br />
+            <RegisterSharedLower />
         </form>
     )
 }
@@ -125,8 +183,8 @@ function RegisterVolunteer() {
     return (
         <form>
             <input type="hidden" name="usertype" value="volunteer" />
-            <RegisterShared />
-            <button type="register">Register</button>
+            <RegisterSharedUpper />
+            <RegisterSharedLower />
         </form>
     )
 }
@@ -135,8 +193,8 @@ function RegisterShowOwner() {
     return (
         <form>
             <input type="hidden" name="usertype" value="shopowner" />
-            <RegisterShared />
-            <button type="register">Work in progress</button>
+            <RegisterSharedUpper />
+            <RegisterSharedLower />
         </form>
     )
 }
@@ -145,11 +203,15 @@ function LoginUserTypeSelector() {
     let types = ['Volunteer', 'Requester', 'ShowOwner']
     let labels = ['Volunteer', 'Requester', 'Show owner']
     return (
-        <div>
-            I am a...
-            <select>
+        <div class="field">
+          <label class="label">I am a...</label>
+          <div class="control">
+            <div class="select">
+              <select>
                 {types.map((type, idx) => <option key={type}>{labels[idx]}</option>)}
-            </select>
+              </select>
+            </div>
+          </div>
         </div>
     )
 }
