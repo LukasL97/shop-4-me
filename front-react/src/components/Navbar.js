@@ -35,6 +35,11 @@ const Navbar = (props) => {
             Shop Now
           </NavLink>
         </li>
+        <li>
+          <NavLink exact activeClassName='active' to='/shop-now'>
+            <i class='fas fa-shopping-cart'></i>
+          </NavLink>
+        </li>
 
         <li>
           <NavLink exact activeClassName='active' to='/login'>
