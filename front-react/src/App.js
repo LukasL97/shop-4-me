@@ -1,26 +1,24 @@
-import React, { Component } from 'react';
+import React, { Component } from 'react'
+import Login from './Login'
+import { BrowserRouter as Router, Route, Link, Switch } from 'react-router-dom'
+import Navbar from './components/Navbar'
 
-import Login from './Login';
-
-var ReactRouter = require('react-router-dom');
-var Router = ReactRouter.BrowserRouter;
-var Route = ReactRouter.Route;
-var Switch = ReactRouter.Switch;
-var Link = require('react-router-dom').Link;
+// var ReactRouter = require('react-router-dom');
+// var Router = ReactRouter.BrowserRouter;
+// var Route = ReactRouter.Route;
+// var Switch = ReactRouter.Switch;
+// var Link = require('react-router-dom').Link;
 
 class App extends Component {
   render() {
     return (
       <Router>
         <div className='container'>
+          {/* <Navbar /> */}
           <Switch>
-            <Route exact path='/' component={Login} />
-            <Route exact path='/home' component={Home} />
-            <Route render={
-              function() {
-                return <p>Not found</p>
-              }
-            } />
+            <Route exact path='/login' component={Login} />
+            <Route exact path='/' component={Home} />
+            <Route render={() => <p>Not found</p>} />
           </Switch>
           <Footer />
         </div>
@@ -33,7 +31,8 @@ class Home extends Component {
   render() {
     return (
       <div className='home'>
-        <h1 className='home-header'>Shop-4-me</h1>
+        {/* <h1 className='home-header'>Shop-4-me</h1> */}
+        <Navbar />
         <div className='cards'>
           <div className='card'>
             <p>Card #1</p>
@@ -56,6 +55,4 @@ function Footer(props) {
   )
 }
 
-
-export default App;
-
+export default App
