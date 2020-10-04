@@ -41,12 +41,12 @@ function LoginSignIn({ history }) {
             history.push('/home')
         }
 
-        axios.post("http://localhost:5000", data).then(callback)
+        axios.post("http://localhost:5000/login", data).then(callback)
     }
 
     return (
         <form onSubmit={handleSubmit}>
-            <input type="hidden" name="usertype" value="requester" />
+            <input type="hidden" name="usertype" value="Requester" />
             <InputField
                 name="email" label="Email" type="email" placeholder="e.g. email@provider.com"
                 iconl="fa-envelope" required />
@@ -180,7 +180,7 @@ function AddressPart() {
 function RegisterRequester() {
     return (
         <form>
-            <input type="hidden" name="usertype" value="requester" />
+            <input type="hidden" name="usertype" value="Requester" />
             <RegisterSharedUpper />
             <AddressPart />
             <RegisterSharedLower />
@@ -191,7 +191,7 @@ function RegisterRequester() {
 function RegisterVolunteer() {
     return (
         <form>
-            <input type="hidden" name="usertype" value="volunteer" />
+            <input type="hidden" name="usertype" value="Volunteer" />
             <RegisterSharedUpper />
             <RegisterSharedLower />
         </form>
@@ -201,7 +201,7 @@ function RegisterVolunteer() {
 function RegisterShowOwner() {
     return (
         <form>
-            <input type="hidden" name="usertype" value="shopowner" />
+            <input type="hidden" name="usertype" value="ShopOwner" />
             <RegisterSharedUpper />
             <RegisterSharedLower />
         </form>

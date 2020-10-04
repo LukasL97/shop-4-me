@@ -1,11 +1,14 @@
 import os
 
 from flask import Flask
+from flask_cors import CORS
 
 from api.user import user
 from spec import get_spec_as_html
 
 app = Flask(__name__)
+CORS(app)
+app.config['CORS_ORIGINS'] = 'http://localhost:3000'
 
 app.register_blueprint(user)
 
