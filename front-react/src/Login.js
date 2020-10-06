@@ -27,7 +27,7 @@ function LoginSignIn() {
     function handleSubmit(event) {
         event.preventDefault();
         let data = {
-            userType: "requester",
+            userType: "Requester",
             loginName: event.target.email.value,
             password: event.target.password.value
         }
@@ -41,7 +41,7 @@ function LoginSignIn() {
             //history.push('/home')
         }
 
-        axios.post("http://localhost:5000", data).then(callback)
+        axios.post("http://localhost:5000/login", data).then(callback)
     }
 
     return (
@@ -174,7 +174,7 @@ function AddressPart() {
 function RegisterRequester() {
     return (
         <form>
-            <input type="hidden" name="usertype" value="requester" />
+            <input type="hidden" name="usertype" value="Requester" />
             <RegisterSharedUpper />
             <AddressPart />
             <RegisterSharedLower />
@@ -185,7 +185,7 @@ function RegisterRequester() {
 function RegisterVolunteer() {
     return (
         <form>
-            <input type="hidden" name="usertype" value="volunteer" />
+            <input type="hidden" name="usertype" value="Volunteer" />
             <RegisterSharedUpper />
             <RegisterSharedLower />
         </form>
@@ -195,7 +195,7 @@ function RegisterVolunteer() {
 function RegisterShowOwner() {
     return (
         <form>
-            <input type="hidden" name="usertype" value="shopowner" />
+            <input type="hidden" name="usertype" value="ShopOwner" />
             <RegisterSharedUpper />
             <RegisterSharedLower />
         </form>

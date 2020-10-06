@@ -9,3 +9,4 @@ Werkzeug==1.0.1
 apispec==4.0.0
 marshmallow==3.8.0
 apispec-webframeworks
+flask-cors
