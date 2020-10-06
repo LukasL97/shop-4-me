@@ -1,7 +1,5 @@
 from unittest import TestCase
-from unittest.mock import Mock
 
-from bson import ObjectId
 from pymongo.database import Database
 
 from dao.users_dao import UsersDAO
@@ -50,12 +48,12 @@ class UserTest(TestCase):
             self.assertEqual(User.active_user_sessions[session_id], user)
 
     def test_login_with_correct_data(self):
-        UserTest.DummyUser.get_dao().store_user(self.dummy_db_user)
+        UserTest.DummyUser.get_dao().store_one(self.dummy_db_user)
         session_id = UserTest.DummyUser.login('name', 'pw')
         self.assertIn(session_id, UserTest.DummyUser.active_user_sessions)
 
     def test_login_with_wrong_password(self):
-        UserTest.DummyUser.get_dao().store_user(self.dummy_db_user)
+        UserTest.DummyUser.get_dao().store_one(self.dummy_db_user)
         with self.assertRaises(IncorrectPasswordError):
             UserTest.DummyUser.login('name', 'wrong_pw')
         self.assertEqual(len(UserTest.DummyUser.active_user_sessions), 0)

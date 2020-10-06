@@ -85,11 +85,9 @@ class User(ABC):
             first_name=first_name,
             last_name=last_name
         )
-        id = cls.get_dao().store_user(user.to_db_object())
+        id = cls.get_dao().store_one(user.to_db_object())
         user.id = id
         return cls.add_active_user_session(user)
-
-
 
 
 class Requester(User):
