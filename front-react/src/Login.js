@@ -5,7 +5,11 @@ import Cookies from 'universal-cookie';
 var ReactRouter = require('react-router-dom');
 
 function Login() {
-    let history = ReactRouter.useHistory()
+	let history = ReactRouter.useHistory()
+	
+	function gotoHome() {
+		history.push('/')
+	}
 
     return (
         <div className='login'>
@@ -13,16 +17,16 @@ function Login() {
                 <h1 className="title">Welcome to <strong>Shop-4-Me</strong></h1>
                 <h2 className="title">Friendly neighborhood shopping assistant</h2>
                 <LoginUserTypeSelector />
-                <LoginSignIn />
+                <LoginSignIn to={gotoHome}/>
             </section>
             <section className="section">
-                <LoginRegister />
+                <LoginRegister to={gotoHome}/>
             </section>
         </div>
     )
 }
 
-function LoginSignIn() {
+function LoginSignIn({to}) {
 
     function handleSubmit(event) {
         event.preventDefault();
@@ -36,9 +40,8 @@ function LoginSignIn() {
         var callback = (res) => {
             console.log(res)
             const cookies = new Cookies();
-            cookies.set('access_token', res.access_token, { path: '/', expires: res.expiry_time })
-            cookies.set('refresh_token', res.refresh_token, { path: '/' })
-            //history.push('/home')
+            cookies.set('access_token', res.data, { path: '/', expires: new Date(new Date().getTime() + 60 * 60 * 1000) })
+            to()
         }
 
         axios.post("http://localhost:5000/login", data).then(callback)
@@ -55,33 +58,33 @@ function LoginSignIn() {
     )
 }
 
-function LoginRegister() {
+function LoginRegister({to}) {
 
     function handleSubmit(event) {
-        event.preventDefault();
-        // TODO POST to backend
-
-        var callback = (data) => {
-            const cookies = new Cookies();
-            cookies.set('access_token', data.access_token, { path: '/', expires: data.expiry_time })
-            cookies.set('refresh_token', data.refresh_token, { path: '/' })
+		event.preventDefault();
+        let data = {
+            userType: event.target.usertype.value,
+            loginName: event.target.email.value,
+            password: event.target.password.value,
+            firstName: event.target.firstname.value,
+            lastName: event.target.lastname.value
         }
-        callback({
-            access_token: "blah",
-            refresh_token: "blöh",
-            expiry_time: new Date(new Date().getTime() + 60 * 60 * 1000)
-        })
 
-        //history.push('/home')
-        //use <Redirect>
+        var callback = (res) => {
+			console.log(res);
+            const cookies = new Cookies();
+            cookies.set('access_token', res.data, { path: '/', expires: new Date(new Date().getTime() + 60 * 60 * 1000) })
+			to()
+		}
+        axios.post("http://localhost:5000/register", data).then(callback)
     }
 
     let component = RegisterRequester()
 
     return (
-        <div>
+        <form onSubmit={handleSubmit}>
             {component}
-        </div>
+        </form>
     )
 
 }
@@ -160,45 +163,45 @@ function RegisterSharedLower() {
     )
 }
 
-function AddressPart() {
+function RegisterAddressPart() {
     return (
-        <div>
+        <>
             <InputField
                 name="address" label="Street address" type="text" placeholder="e.g. Kyläsaarenkuja 5 B" required />
             <InputField
                 name="zip" label="ZIP Code" type="number" placeholder="e.g. 00220" required />
-        </div>
+        </>
     )
 }
 
 function RegisterRequester() {
     return (
-        <form>
+        <>
             <input type="hidden" name="usertype" value="Requester" />
             <RegisterSharedUpper />
-            <AddressPart />
+            <RegisterAddressPart />
             <RegisterSharedLower />
-        </form>
+        </>
     )
 }
 
 function RegisterVolunteer() {
     return (
-        <form>
+        <>
             <input type="hidden" name="usertype" value="Volunteer" />
             <RegisterSharedUpper />
             <RegisterSharedLower />
-        </form>
+        </>
     )
 }
 
 function RegisterShowOwner() {
     return (
-        <form>
+        <>
             <input type="hidden" name="usertype" value="ShopOwner" />
             <RegisterSharedUpper />
             <RegisterSharedLower />
-        </form>
+        </>
     )
 }
 
