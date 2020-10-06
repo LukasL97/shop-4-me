@@ -3,6 +3,7 @@ import os
 from flask import Flask
 from flask_cors import CORS
 
+from api.item import item
 from api.user import user
 from spec import get_spec_as_html
 
@@ -11,6 +12,7 @@ CORS(app)
 app.config['CORS_ORIGINS'] = 'http://localhost:3000'
 
 app.register_blueprint(user)
+app.register_blueprint(item)
 
 @app.route('/')
 def get_api_spec():
