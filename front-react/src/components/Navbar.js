@@ -37,7 +37,7 @@ const Navbar = (props) => {
         </li>
         <li>
           <NavLink exact activeClassName='active' to='/shop-now'>
-            <i class='fas fa-shopping-cart'></i>
+            <i className='fas fa-shopping-cart'></i>
           </NavLink>
         </li>
 
