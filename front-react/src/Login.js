@@ -1,6 +1,7 @@
 import axios from 'axios'
 import React from 'react'
 import Cookies from 'universal-cookie'
+import Layout from './components/Layout'
 
 var ReactRouter = require('react-router-dom')
 
@@ -8,19 +9,21 @@ function Login() {
   let history = ReactRouter.useHistory()
 
   return (
-    <div className='login'>
-      <section className='section'>
-        <h1 className='title'>
-          Welcome to <strong>Shop-4-Me</strong>
-        </h1>
-        <h2 className='title'>Friendly neighborhood shopping assistant</h2>
-        <LoginUserTypeSelector />
-        <LoginSignIn />
-      </section>
-      <section className='section'>
-        <LoginRegister />
-      </section>
-    </div>
+    <Layout>
+      <div className='login'>
+        <section className='section'>
+          <h1 className='title'>
+            Welcome to <strong>Shop-4-Me</strong>
+          </h1>
+          <h2 className='title'>Friendly neighborhood shopping assistant</h2>
+          <LoginUserTypeSelector />
+          <LoginSignIn />
+        </section>
+        <section className='section'>
+          <LoginRegister />
+        </section>
+      </div>
+    </Layout>
   )
 }
 
