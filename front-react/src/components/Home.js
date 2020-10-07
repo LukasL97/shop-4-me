@@ -6,7 +6,7 @@ import Cards from './Cards'
 const Home = (props) => {
   return (
     <Layout>
-      <Cards />
+      <Cards data={props.data} />
     </Layout>
   )
 }
