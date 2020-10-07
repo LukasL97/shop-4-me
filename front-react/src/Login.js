@@ -146,7 +146,7 @@ function RegisterSharedUpper() {
 
 function RegisterSharedLower() {
     return (
-        <div>
+        <>
             <div className="field">
                 <div className="control">
                     <label className="checkbox">
@@ -159,7 +159,7 @@ function RegisterSharedLower() {
                     <button className="button is-link" type="submit">Register</button>
                 </div>
             </div>
-        </div>
+        </>
     )
 }
 
