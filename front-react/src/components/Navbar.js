@@ -10,7 +10,6 @@ const Navbar = (props) => {
         <a href='/' className='brand-name'>
           Shop4Me
         </a>
-
         <small>Bring the store to your door</small>
       </div>
       <ul>
@@ -25,7 +24,7 @@ const Navbar = (props) => {
           </NavLink>
         </li>
         <li>
-          <NavLink exact activeClassName='active' to='/shop-now'>
+          <NavLink exact activeClassName='active' to='/eligible'>
             Eligible
           </NavLink>
         </li>
@@ -36,8 +35,9 @@ const Navbar = (props) => {
           </NavLink>
         </li>
         <li>
-          <NavLink exact activeClassName='active' to='/shop-now'>
+          <NavLink exact activeClassName='active' to='/cart'>
             <i className='fas fa-shopping-cart'></i>
+            {props.cart && <sup>123</sup>}
           </NavLink>
         </li>
 
