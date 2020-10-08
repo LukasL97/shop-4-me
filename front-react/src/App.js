@@ -5,6 +5,7 @@ import Navbar from './components/Navbar'
 import Cards from './components/Cards'
 import About from './components/About'
 import Home from './components/Home'
+import NotFound from './components/NotFound'
 
 class App extends Component {
   render() {
@@ -14,7 +15,7 @@ class App extends Component {
           <Route exact path='/login' component={Login} />
           <Route exact path='/about' component={About} />
           <Route exact path='/' component={Home} />
-          <Route render={() => <p>Not found</p>} />
+          <Route component={NotFound} />
         </Switch>
       </Router>
     )
