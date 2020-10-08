@@ -2,6 +2,7 @@ import React from 'react'
 import { Link, NavLink } from 'react-router-dom'
 import PropTypes from 'prop-types'
 import '../assets/styles/navbar.scss'
+import Button from './Button'
 
 const Navbar = (props) => {
   return (
@@ -45,6 +46,9 @@ const Navbar = (props) => {
           <NavLink exact activeClassName='active' to='/login'>
             Login
           </NavLink>
+        </li>
+        <li>
+          <Button text='Logout' />
         </li>
       </ul>
     </div>
