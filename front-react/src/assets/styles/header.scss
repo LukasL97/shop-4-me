@@ -1,0 +1,24 @@
+/* === HEADER === */
+header {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 0px;
+  min-height: 250px;
+  font-size: 130%;
+  background-color: #f1ebf1;
+  margin-bottom: 30px;
+}
+
+.page-title {
+  padding: 10px;
+  text-transform: uppercase;
+  /*
+  background: #f0f0f0;
+  background: #00e091;
+  */
+  font-weight: 600;
+  text-align: center;
+  color: black;
+}
