@@ -18,6 +18,7 @@ import milk from './assets/images/milk.jpg'
 import toilet from './assets/images/toilet.jpg'
 import ready_made_food from './assets/images/ready_made_food.jpg'
 import soft_drinks from './assets/images/soft_drinks.jpg'
+import Cart from './components/Cart'
 
 const images = [
   alcohol,
@@ -40,6 +41,10 @@ const data = items.map((item) => {
 class App extends Component {
   state = {
     data: data,
+    cart: [],
+  }
+  addItemToCart = (item) => {
+    this.setState({ cart: [...this.state.cart, item] })
   }
   render() {
     return (
@@ -54,10 +59,13 @@ class App extends Component {
               <CardDetail {...props} data={this.state.data} />
             )}
           />
+          <Route path='/cart' component={Cart} />
           <Route
             exact
             path='/'
-            component={() => <Home data={this.state.data} />}
+            component={() => (
+              <Home data={this.state.data} addItemToCart={this.addItemToCart} />
+            )}
           />
           <Route component={NotFound} />
         </Switch>

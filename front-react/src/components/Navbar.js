@@ -2,6 +2,7 @@ import React from 'react'
 import { Link, NavLink } from 'react-router-dom'
 import PropTypes from 'prop-types'
 import '../assets/styles/navbar.scss'
+import Button from './Button'
 
 const Navbar = (props) => {
   return (
@@ -10,7 +11,6 @@ const Navbar = (props) => {
         <a href='/' className='brand-name'>
           Shop4Me
         </a>
-
         <small>Bring the store to your door</small>
       </div>
       <ul>
@@ -25,7 +25,7 @@ const Navbar = (props) => {
           </NavLink>
         </li>
         <li>
-          <NavLink exact activeClassName='active' to='/shop-now'>
+          <NavLink exact activeClassName='active' to='/eligible'>
             Eligible
           </NavLink>
         </li>
@@ -36,8 +36,9 @@ const Navbar = (props) => {
           </NavLink>
         </li>
         <li>
-          <NavLink exact activeClassName='active' to='/shop-now'>
+          <NavLink exact activeClassName='active' to='/cart'>
             <i className='fas fa-shopping-cart'></i>
+            {props.cart && <sup>123</sup>}
           </NavLink>
         </li>
 
@@ -45,6 +46,9 @@ const Navbar = (props) => {
           <NavLink exact activeClassName='active' to='/login'>
             Login
           </NavLink>
+        </li>
+        <li>
+          <Button text='Logout' />
         </li>
       </ul>
     </div>
