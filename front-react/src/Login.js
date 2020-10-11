@@ -14,17 +14,19 @@ function Login() {
 	}
 
     return (
-        <div className='login'>
-            <section className="section">
-                <h1 className="title">Welcome to <strong>Shop-4-Me</strong></h1>
-                <h2 className="title">Friendly neighborhood shopping assistant</h2>
-                <LoginUserTypeSelector setRegisterComponent={setRegisterComponent}/>
-                <LoginSignIn to={gotoHome}/>
-            </section>
-            <section className="section">
-                <LoginRegister to={gotoHome} registerComponent={registerComponent}/>
-            </section>
-        </div>
+		<Layout>
+			<div className='login'>
+				<section className="section">
+					<h1 className="title">Welcome to <strong>Shop-4-Me</strong></h1>
+					<h2 className="title">Friendly neighborhood shopping assistant</h2>
+					<LoginUserTypeSelector setRegisterComponent={setRegisterComponent}/>
+					<LoginSignIn to={gotoHome}/>
+				</section>
+				<section className="section">
+					<LoginRegister to={gotoHome} registerComponent={registerComponent}/>
+				</section>
+			</div>
+    	</Layout>
     )
 }
 
@@ -114,8 +116,8 @@ class InputField extends React.Component {
   }
 
   handleOnChange(event) {
-	if (this.inputCheck) { // TODO
-		let result = this.inputCheck(event.target.value)
+	if (this.props.inputCheck) {
+		let result = this.props.inputCheck(event.target.value)
 		this.setState({
 			...this.state,
 			...result
@@ -128,13 +130,12 @@ class InputField extends React.Component {
 	var input_class = ''
 	var below_text = null
   
-	input_class = this.props.error_message ? 'is-danger' : this.props.ok_message ? 'is-success' : ''
-	below_text = this.props.error_message ? (
-		<p className='help is-danger'>{this.props.error_message}</p>
-	) : this.props.ok_message ? (
-		<p className='help is-success'>{this.props.ok_message}</p>
+	input_class = this.state.error_message ? 'is-danger' : this.state.ok_message ? 'is-success' : ''
+	below_text = this.state.error_message ? (
+		<p className='help is-danger'>{this.state.error_message}</p>
+	) : this.state.ok_message ? (
+		<p className='help is-success'>{this.state.ok_message}</p>
 	) : null
-  
   
 	var icon_container_class = ''
 	var right_icon = null
@@ -181,7 +182,7 @@ class InputField extends React.Component {
 		{below_text}
 		</div>
 	)
-	}
+  }
 }
 
 function RegisterSharedUpper() {
@@ -207,12 +208,12 @@ function RegisterSharedUpper() {
         type='email'
         placeholder='e.g. email@provider.com'
         iconl='fa-envelope'
-        iconr='fa-check'
 		inputCheck={(email) => {
 			return email ? {
 				ok_message: 'This username is available',
 				iconr: 'fa-check'
 			} : {
+				ok_message: null,
 				iconr: null
 			}
 		}}
@@ -226,10 +227,12 @@ function RegisterSharedUpper() {
 		iconl='fa-user'
 		inputCheck={(password) => {
 			return password.length < 7 ? {
+				ok_message: null,
 				error_message: 'Password is too short!',
 				iconr: null
 			} : {
-				ok_message: '',
+				ok_message: ' ',
+				error_message: null,
 				iconr: 'fa-check'
 			}
 		}}
