@@ -10,3 +10,17 @@ class UnexpectedUserTypeError(RuntimeError):
 
 class UserAlreadyRegisteredError(RuntimeError):
     pass
+
+class ShopDoesNotExistError(RuntimeError):
+    pass
+
+class UserSessionIdNotFoundError(RuntimeError):
+    pass
+
+class UnauthorizedAccessError(RuntimeError):
+    pass
+
+class ObjectIdNotFoundError(RuntimeError):
+
+    def __init__(self, object_id: str):
+        self.object_id = object_id
