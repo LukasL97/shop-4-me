@@ -7,7 +7,8 @@ from typing import Dict, Any, Optional
 from dao.users_dao import UsersDAO, RequestersDAO, VolunteersDAO, ShopOwnersDAO
 from db import db
 from model.abstract_model import AbstractModel
-from model.exception import UserNotFoundError, IncorrectPasswordError, UserAlreadyRegisteredError
+from model.exception import UserNotFoundError, IncorrectPasswordError, UserAlreadyRegisteredError, \
+    UserSessionIdNotFoundError
 
 
 class User(AbstractModel):
@@ -63,6 +64,13 @@ class User(AbstractModel):
         session_id = cls.generate_session_id()
         cls.active_user_sessions[session_id] = user
         return session_id
+
+    @classmethod
+    def get_user_id_from_session_id(cls, session_id: str) -> str:
+        try:
+            return cls.active_user_sessions[session_id].id
+        except KeyError:
+            raise UserSessionIdNotFoundError
 
     @classmethod
     def login(cls, name: str, password: str) -> str:

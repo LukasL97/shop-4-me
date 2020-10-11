@@ -19,3 +19,8 @@ class UserSessionIdNotFoundError(RuntimeError):
 
 class UnauthorizedAccessError(RuntimeError):
     pass
+
+class ObjectIdNotFoundError(RuntimeError):
+
+    def __init__(self, object_id: str):
+        self.object_id = object_id
