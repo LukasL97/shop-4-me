@@ -1,15 +1,16 @@
 from __future__ import annotations
 
 import uuid
-from abc import ABC, abstractmethod
+from abc import abstractmethod
 from typing import Dict, Any, Optional
 
 from dao.users_dao import UsersDAO, RequestersDAO, VolunteersDAO, ShopOwnersDAO
 from db import db
+from model.abstract_model import AbstractModel
 from model.exception import UserNotFoundError, IncorrectPasswordError, UserAlreadyRegisteredError
 
 
-class User(ABC):
+class User(AbstractModel):
 
     # in-memory storage of active user sessions, used to authenticate users in every further request after login
     active_user_sessions: Dict[str, User] = {}
@@ -19,7 +20,7 @@ class User(ABC):
         self.password_hash: str = password_hash
         self.first_name: str = first_name
         self.last_name: str = last_name
-        self.id: Optional[str] = id
+        super(User, self).__init__(id)
 
     @classmethod
     @abstractmethod
@@ -27,13 +28,13 @@ class User(ABC):
         raise NotImplementedError
 
     @classmethod
-    def from_db_object(cls, user_dict: Dict[str, Any]) -> User:
+    def from_db_object(cls, db_object: Dict[str, Any]) -> User:
         return cls(
-            login_name=user_dict['login']['name'],
-            password_hash=user_dict['login']['passwordHash'],
-            first_name=user_dict['name']['first'],
-            last_name=user_dict['name']['last'],
-            id=str(user_dict['_id'])
+            login_name=db_object['login']['name'],
+            password_hash=db_object['login']['passwordHash'],
+            first_name=db_object['name']['first'],
+            last_name=db_object['name']['last'],
+            id=str(db_object['_id'])
         )
 
     def to_db_object(self) -> Dict[str, Any]:
@@ -85,11 +86,9 @@ class User(ABC):
             first_name=first_name,
             last_name=last_name
         )
-        id = cls.get_dao().store_user(user.to_db_object())
+        id = cls.get_dao().store_one(user.to_db_object())
         user.id = id
         return cls.add_active_user_session(user)
-
-
 
 
 class Requester(User):

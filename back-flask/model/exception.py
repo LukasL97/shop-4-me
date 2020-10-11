@@ -10,3 +10,12 @@ class UnexpectedUserTypeError(RuntimeError):
 
 class UserAlreadyRegisteredError(RuntimeError):
     pass
+
+class ShopDoesNotExistError(RuntimeError):
+    pass
+
+class UserSessionIdNotFoundError(RuntimeError):
+    pass
+
+class UnauthorizedAccessError(RuntimeError):
+    pass
