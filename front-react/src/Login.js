@@ -260,15 +260,14 @@ function RegisterShowOwner() {
 }
 
 function LoginUserTypeSelector({ setRegisterComponent }) {
-	let types = ['Volunteer', 'Requester', 'ShopOwner']
-	let labels = ['Volunteer', 'Requester', 'Shop owner']
+	let selections = [
+		{ label: 'Volunteer',  registerComponent: <RegisterVolunteer /> },
+		{ label: 'Requester',  registerComponent: <RegisterRequester /> },
+		{ label: 'Shop owner', registerComponent: <RegisterShowOwner /> }
+	]
 
 	function handleOnChange(event) {
-		setRegisterComponent({
-			"Volunteer": <RegisterVolunteer />,
-			"Requester": <RegisterRequester />,
-			"ShopOwner": <RegisterShowOwner />
-		}[event.target.value])
+		setRegisterComponent(selections[event.target.value].registerComponent)
 	}
 
   return (
@@ -277,8 +276,8 @@ function LoginUserTypeSelector({ setRegisterComponent }) {
       <div className='control'>
         <div className='select'>
           <select onChange={handleOnChange}>
-            {types.map((type, idx) => (
-              <option key={type} value={type}>{labels[idx]}</option>
+            {selections.map((data, idx) => (
+              <option key={idx} value={idx}>{data.label}</option>
             ))}
           </select>
         </div>
