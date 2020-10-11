@@ -100,62 +100,88 @@ function LoginRegister({to, registerComponent}) {
     )
 }
 
-function InputField({
-  name,
-  label,
-  type,
-  placeholder,
-  iconr,
-  iconl,
-  error_message,
-  ok_message,
-  required,
-}) {
-  var input_class = error_message ? 'is-danger' : ok_message ? 'is-success' : ''
-  var below_text = error_message ? (
-    <p className='help is-danger'>{error_message}</p>
-  ) : ok_message ? (
-    <p className='help is-success'>{ok_message}</p>
-  ) : null
-  var icon_container_class = ''
-  var right_icon = null
-  var left_icon = null
-  if (iconr) {
-    icon_container_class += ' has-icons-right'
-    right_icon = (
-      <span className='icon is-small is-right'>
-        <i className={'fas ' + iconr}></i>
-      </span>
-    )
+class InputField extends React.Component {
+
+  constructor(props){ //{ name, label, type, placeholder, iconr, iconl, error_message, ok_message, inputCheck, required }
+	super(props);
+   
+	this.state = {
+		error_message: props.error_message,
+		ok_message: props.ok_message,
+		iconr: props.iconr,
+		iconl: props.iconl
+	}
   }
-  if (iconl) {
-    icon_container_class += ' has-icons-left'
-    left_icon = (
-      <span className='icon is-small is-left'>
-        <i className={'fas ' + iconl}></i>
-      </span>
-    )
+
+  handleOnChange(event) {
+	if (this.inputCheck) { // TODO
+		let result = this.inputCheck(event.target.value)
+		this.setState({
+			...this.state,
+			...result
+		})
+		console.log(this.state)
+	}
   }
-  required = required ? true : false //cast to boolean
-  return (
-    <div className='field'>
-      <label htmlFor={name} className='label'>
-        {label}
-      </label>
-      <div className={'control' + icon_container_class}>
-        <input
-          name={name}
-          className={'input ' + input_class}
-          type={type}
-          placeholder={placeholder}
-          required={required}
-        />
-        {left_icon}
-        {right_icon}
-      </div>
-      {below_text}
-    </div>
-  )
+
+  render() {
+	var input_class = ''
+	var below_text = null
+  
+	input_class = this.props.error_message ? 'is-danger' : this.props.ok_message ? 'is-success' : ''
+	below_text = this.props.error_message ? (
+		<p className='help is-danger'>{this.props.error_message}</p>
+	) : this.props.ok_message ? (
+		<p className='help is-success'>{this.props.ok_message}</p>
+	) : null
+  
+  
+	var icon_container_class = ''
+	var right_icon = null
+	var left_icon = null
+	var required = this.props.required ? true : false //cast to boolean
+  
+	icon_container_class = ''
+	right_icon = null
+	left_icon = null
+	if (this.state.iconr) {
+		icon_container_class += ' has-icons-right'
+		right_icon = (
+		<span className='icon is-small is-right'>
+			<i className={'fas ' + this.state.iconr}></i>
+		</span>
+		)
+	}
+	if (this.state.iconl) {
+		icon_container_class += ' has-icons-left'
+		left_icon = (
+		<span className='icon is-small is-left'>
+			<i className={'fas ' + this.state.iconl}></i>
+		</span>
+		)
+	}
+
+	return (
+		<div className='field'>
+		<label htmlFor={this.props.name} className='label'>
+			{this.props.label}
+		</label>
+		<div className={'control' + icon_container_class}>
+			<input
+			name={this.props.name}
+			className={'input ' + input_class}
+			type={this.props.type}
+			placeholder={this.props.placeholder}
+			onChange={(event) => this.handleOnChange(event)}
+			required={required}
+			/>
+			{left_icon}
+			{right_icon}
+		</div>
+		{below_text}
+		</div>
+	)
+	}
 }
 
 function RegisterSharedUpper() {
@@ -182,7 +208,14 @@ function RegisterSharedUpper() {
         placeholder='e.g. email@provider.com'
         iconl='fa-envelope'
         iconr='fa-check'
-        ok_message='This username is available'
+		inputCheck={(email) => {
+			return email ? {
+				ok_message: 'This username is available',
+				iconr: 'fa-check'
+			} : {
+				iconr: null
+			}
+		}}
         required
       />
       <InputField
@@ -190,8 +223,16 @@ function RegisterSharedUpper() {
         label='Password'
         type='password'
         placeholder='e.g. something614SortaSecure'
-        iconl='fa-user'
-        error_message='Password is too short!'
+		iconl='fa-user'
+		inputCheck={(password) => {
+			return password.length < 7 ? {
+				error_message: 'Password is too short!',
+				iconr: null
+			} : {
+				ok_message: '',
+				iconr: 'fa-check'
+			}
+		}}
         required
       />
     </div>
