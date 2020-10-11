@@ -1,13 +1,63 @@
+/* === GENERAL === */
 * {
   box-sizing: border-box;
+  padding: 0;
+  margin: 0;
 }
 
+html,
 body {
+  height: 100%;
+  line-height: 1.5;
 }
 
-#root {
-  width: 85%;
-  margin: auto;
+.header-wrapper,
+.main-wrapper,
+.footer-wrapper {
+  margin:auto;
+  width: 80%;
 }
-footer {
+
+/* === app root  === */
+#root {
+  min-height: 100%;
+  position: relative;
+  letter-spacing: 1.25px;
+}
+
+/* === MAIN === */
+main {
+  padding-bottom: 300px;
+  font-size: 130%;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-weight: 300;
+  text-transform: uppercase;
+}
+
+p {
+  font-family: var(--font-family-body);
+  font-weight: 300;
+}
+
+a {
+  text-decoration: none;
+  color: black;
+}
+
+ul li a {
+  color: white;
+  font-size: 18px;
+  text-transform: uppercase;
+}
+
+small {
+  font-size: 18px !important;
+  font-family: 'Roboto' !important;
 }

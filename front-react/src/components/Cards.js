@@ -25,11 +25,9 @@ const images = [
 ]
 
 const Cards = (props) => {
-  const cardItems = items.map((item) => {
-    let randIndex = Math.floor(Math.random() * images.length)
-    let image = images[randIndex]
-    return <Card key={item.id} item={item} image={image} />
-  })
+  const cardItems = props.data.map((item) => (
+    <Card key={item.id} item={item} image={item.image} id={item.id} />
+  ))
   return <div className='cards'>{cardItems}</div>
 }
 

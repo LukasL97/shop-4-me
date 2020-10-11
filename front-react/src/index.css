@@ -1,7 +1,5 @@
 @import './assets/styles/common.scss';
-@import './assets//styles//card.scss';
-body {
-  margin: 0;
-  padding: 0;
-  font-family: sans-serif;
-}
+@import './assets/styles/card.scss';
+@import './assets/styles/footer.scss';
+@import './assets/styles/header.scss';
+
