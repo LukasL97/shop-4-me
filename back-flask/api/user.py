@@ -1,6 +1,6 @@
-from typing import Type, Tuple
+from typing import Type
 
-from flask import request
+from flask import request, Response, make_response
 
 from api.http_status import OK, BAD_REQUEST, NOT_FOUND, UNAUTHORIZED, CONFLICT
 from model.exception import UnexpectedUserTypeError, UserNotFoundError, IncorrectPasswordError, \
@@ -8,8 +8,7 @@ from model.exception import UnexpectedUserTypeError, UserNotFoundError, Incorrec
 from model.user import User, Requester, Volunteer, ShopOwner
 from spec import DocumentedBlueprint
 
-
-user = DocumentedBlueprint('login', __name__)
+user = DocumentedBlueprint('user', __name__)
 
 
 def get_user_model(user_type: str) -> Type[User]:
@@ -20,7 +19,7 @@ def get_user_model(user_type: str) -> Type[User]:
 
 
 @user.route('/login', methods=['POST'])
-def login() -> Tuple[str, int]:
+def login() -> Response:
     '''
     ---
     post:
@@ -56,19 +55,19 @@ def login() -> Tuple[str, int]:
     '''
     user_data = request.json
     try:
-        return get_user_model(user_data['userType']).login(user_data['loginName'], user_data['password']), OK
+        return make_response(get_user_model(user_data['userType']).login(user_data['loginName'], user_data['password']), OK)
     except UnexpectedUserTypeError:
-        return 'Unexpected user type %s' % user_data['userType'], BAD_REQUEST
+        return make_response('Unexpected user type %s' % user_data['userType'], BAD_REQUEST)
     except UserNotFoundError:
-        return 'User %s not found' % user_data['loginName'], NOT_FOUND
+        return make_response('User %s not found' % user_data['loginName'], NOT_FOUND)
     except IncorrectPasswordError:
-        return 'Incorrect password', UNAUTHORIZED
+        return make_response('Incorrect password', UNAUTHORIZED)
     except KeyError:
-        return 'Request body did not contain required information', BAD_REQUEST
+        return make_response('Request body did not contain required information', BAD_REQUEST)
 
 
 @user.route('/register', methods=['POST'])
-def register() -> Tuple[str, int]:
+def register() -> Response:
     '''
     ---
     post:
@@ -107,15 +106,15 @@ def register() -> Tuple[str, int]:
     '''
     user_data = request.json
     try:
-        return get_user_model(user_data['userType']).register(
+        return make_response(get_user_model(user_data['userType']).register(
             login_name=user_data['loginName'],
             password=user_data['password'],
             first_name=user_data['firstName'],
             last_name=user_data['lastName']
-        ), OK
+        ), OK)
     except UnexpectedUserTypeError:
-        return 'Unexpected user type %s' % user_data['userType'], BAD_REQUEST
+        return make_response('Unexpected user type %s' % user_data['userType'], BAD_REQUEST)
     except KeyError:
-        return 'Request body did not contain required information', BAD_REQUEST
+        return make_response('Request body did not contain required information', BAD_REQUEST)
     except UserAlreadyRegisteredError:
-        return 'Login name %s is already used' % user_data['loginName'], CONFLICT
+        return make_response('Login name %s is already used' % user_data['loginName'], CONFLICT)

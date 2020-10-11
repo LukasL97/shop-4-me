@@ -1,26 +1,14 @@
-from abc import ABC, abstractmethod
 from typing import Optional, Dict, Any
 
-from bson import ObjectId
-from pymongo.collection import Collection
 from pymongo.database import Database
 
+from dao.abstract_dao import AbstractDAO
 
-class UsersDAO(object):
 
-    @abstractmethod
-    def __init__(self, db: Database, collection_name: str):
-        self.db: Database = db
-        self.collection: Collection = db.get_collection(collection_name)
+class UsersDAO(AbstractDAO):
 
     def get_user_by_login_name(self, name: str) -> Optional[Dict[str, Any]]:
         return self.collection.find_one({'login.name': name})
-
-    def store_user(self, user_dict: Dict[str, Any]) -> ObjectId:
-        return self.collection.insert_one(user_dict)
-
-    def clear(self) -> None:
-        self.collection.delete_many({})
 
 
 class RequestersDAO(UsersDAO):
