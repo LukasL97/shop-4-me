@@ -1,6 +1,7 @@
 from abc import abstractmethod, ABC
-from typing import Dict, Any, List
+from typing import Dict, Any, List, Optional
 
+from bson import ObjectId
 from pymongo.collection import Collection
 from pymongo.database import Database
 
@@ -21,3 +22,6 @@ class AbstractDAO(ABC):
     def store_one(self, object_dict: Dict[str, Any]) -> str:
         result = self.collection.insert_one(object_dict)
         return str(result.inserted_id)
+
+    def get_from_id(self, id: str) -> Optional[Dict[str, Any]]:
+        return self.collection.find_one({'_id': ObjectId(id)})
