@@ -98,6 +98,14 @@ class User(AbstractModel):
         user.id = id
         return cls.add_active_user_session(user)
 
+    @classmethod
+    def logout(cls, session_id: str) -> str:
+        if session_id in cls.active_user_sessions:
+            cls.active_user_sessions.pop(session_id)
+            return 'User logged out successfully'
+        else:
+            raise UserSessionIdNotFoundError
+
 
 class Requester(User):
 
