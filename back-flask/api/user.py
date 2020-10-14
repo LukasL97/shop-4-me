@@ -4,7 +4,7 @@ from flask import request, Response, make_response
 
 from api.http_status import OK, BAD_REQUEST, NOT_FOUND, UNAUTHORIZED, CONFLICT
 from model.exception import UnexpectedUserTypeError, UserNotFoundError, IncorrectPasswordError, \
-    UserAlreadyRegisteredError
+    UserAlreadyRegisteredError, UserSessionIdNotFoundError
 from model.user import User, Requester, Volunteer, ShopOwner
 from spec import DocumentedBlueprint
 
@@ -118,3 +118,42 @@ def register() -> Response:
         return make_response('Request body did not contain required information', BAD_REQUEST)
     except UserAlreadyRegisteredError:
         return make_response('Login name %s is already used' % user_data['loginName'], CONFLICT)
+
+
+@user.route('/logout', methods=['DELETE'])
+def logout() -> Response:
+    '''
+    ---
+    delete:
+        summary: logout a logged in user
+        requestBody:
+            required: true
+            content:
+                application/json:
+                    schema:
+                        type: object
+                        properties:
+                            userType:
+                                type: string
+                                description: either "Requester", "Volunteer" or "ShopOwner"
+                            sessionId:
+                                type: string
+                                description: session id of the user that is to be logged out
+        responses:
+            200:
+                description: logout successful
+            400:
+                description: unexpected user type or incorrect request body
+            404:
+                description: session id did not refer to any logged in user of this type
+    '''
+    user_data = request.json
+    try:
+        return make_response(get_user_model(user_data['userType']).logout(
+            session_id=user_data['sessionId']
+        ), OK)
+    except KeyError:
+        return make_response('Request body did not contain required information', BAD_REQUEST)
+    except UserSessionIdNotFoundError:
+        return make_response('User of type %s with session id %s not found' % (user_data['userType'], user_data['sessionId']), NOT_FOUND)
+
