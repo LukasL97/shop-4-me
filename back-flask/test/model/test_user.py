@@ -3,7 +3,8 @@ from unittest import TestCase
 from pymongo.database import Database
 
 from dao.users_dao import UsersDAO
-from model.exception import IncorrectPasswordError, UserNotFoundError, UserAlreadyRegisteredError
+from model.exception import IncorrectPasswordError, UserNotFoundError, UserAlreadyRegisteredError, \
+    UserSessionIdNotFoundError
 from model.user import User
 from test.mongodb_integration_test_setup import get_empty_local_test_db
 
@@ -74,3 +75,16 @@ class UserTest(TestCase):
         with self.assertRaises(UserAlreadyRegisteredError):
             DummyUser.register('name', 'pw', 'first', 'last')
         self.assertEqual(len(DummyUser.active_user_sessions), 1)
+
+    def test_logout_loggedin_user(self):
+        DummyUser.get_dao().store_one(self.dummy_db_user)
+        session_id = DummyUser.login('name', 'pw')
+        self.assertIn(session_id, DummyUser.active_user_sessions)
+        DummyUser.logout(session_id)
+        self.assertNotIn(session_id, DummyUser.active_user_sessions)
+
+    def test_logout_with_unknown_session_id(self):
+        session_id = 'someId'
+        self.assertNotIn(session_id, DummyUser.active_user_sessions)
+        with self.assertRaises(UserSessionIdNotFoundError):
+            DummyUser.logout(session_id)
