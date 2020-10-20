@@ -8,7 +8,7 @@ from spec import DocumentedBlueprint
 item = DocumentedBlueprint('item', __name__)
 
 
-@item.route('/item/findByShopAndCategory', methods=['GET'])
+@item.route('/items/findByShopAndCategory', methods=['GET'])
 def find_by_shop_and_category() -> Response:
     '''
     ---

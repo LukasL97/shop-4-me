@@ -173,7 +173,7 @@ def accept_request() -> Response:
         return make_response('Tried accepting request that did not have expected status %d, but status %d' % (error.expected, error.actual), UNPROCESSABLE_ENTITY)
 
 
-@request.route('/request/open', methods=['GET'])
+@request.route('/requests/open', methods=['GET'])
 def get_open_requests() -> Response:
     '''
     ---
@@ -213,7 +213,7 @@ def get_open_requests() -> Response:
         return make_response('User of type Volunteer with session id %s not found' % body['sessionId'], UNAUTHORIZED)
 
 
-@request.route('/request/own', methods=['GET'])
+@request.route('/requests/own', methods=['GET'])
 def get_own_requests() -> Response:
     '''
     ---
