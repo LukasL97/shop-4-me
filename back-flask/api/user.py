@@ -1,25 +1,17 @@
-from typing import Type
 
 from flask import request, Response, make_response
 
 from api.http_status import OK, BAD_REQUEST, NOT_FOUND, UNAUTHORIZED, CONFLICT
 from model.exception import UnexpectedUserTypeError, UserNotFoundError, IncorrectPasswordError, \
     UserAlreadyRegisteredError, UserSessionIdNotFoundError
-from model.user import User, Requester, Volunteer, ShopOwner
+from model.user import UserHandlerResolver
 from spec import DocumentedBlueprint
 
 user = DocumentedBlueprint('user', __name__)
 
 
-def get_user_model(user_type: str) -> Type[User]:
-    if user_type == 'Requester': return Requester
-    if user_type == 'Volunteer': return Volunteer
-    if user_type == 'ShopOwner': return ShopOwner
-    raise UnexpectedUserTypeError
-
-
 @user.route('/login', methods=['POST'])
-def login() -> Response:
+def login(resolver: UserHandlerResolver) -> Response:
     '''
     ---
     post:
@@ -55,7 +47,8 @@ def login() -> Response:
     '''
     user_data = request.json
     try:
-        return make_response(get_user_model(user_data['userType']).login(user_data['loginName'], user_data['password']), OK)
+        user_handler = resolver.get(user_data['userType'])
+        return make_response(user_handler.login(user_data['loginName'], user_data['password']), OK)
     except UnexpectedUserTypeError:
         return make_response('Unexpected user type %s' % user_data['userType'], BAD_REQUEST)
     except UserNotFoundError:
@@ -67,7 +60,7 @@ def login() -> Response:
 
 
 @user.route('/register', methods=['POST'])
-def register() -> Response:
+def register(resolver: UserHandlerResolver) -> Response:
     '''
     ---
     post:
@@ -106,7 +99,8 @@ def register() -> Response:
     '''
     user_data = request.json
     try:
-        return make_response(get_user_model(user_data['userType']).register(
+        user_handler = resolver.get(user_data['userType'])
+        return make_response(user_handler.register(
             login_name=user_data['loginName'],
             password=user_data['password'],
             first_name=user_data['firstName'],
@@ -121,7 +115,7 @@ def register() -> Response:
 
 
 @user.route('/logout', methods=['DELETE'])
-def logout() -> Response:
+def logout(resolver: UserHandlerResolver) -> Response:
     '''
     ---
     delete:
@@ -149,7 +143,8 @@ def logout() -> Response:
     '''
     user_data = request.json
     try:
-        return make_response(get_user_model(user_data['userType']).logout(
+        user_handler = resolver.get(user_data['userType'])
+        return make_response(user_handler.logout(
             session_id=user_data['sessionId']
         ), OK)
     except KeyError:
