@@ -10,3 +10,6 @@ apispec==4.0.0
 marshmallow==3.8.0
 apispec-webframeworks
 flask-cors
+Flask-Injector=0.12.3
+
+
