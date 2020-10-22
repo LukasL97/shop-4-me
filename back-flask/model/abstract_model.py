@@ -1,35 +1,40 @@
 from __future__ import annotations
 
 from abc import ABC, abstractmethod
-from typing import Optional, Dict, Any
+from typing import Optional, Dict, Any, Type
+
+from injector import inject
 
 from dao.abstract_dao import AbstractDAO
 from model.exception import ObjectIdNotFoundError
 
 
 class AbstractModel(ABC):
+    ''' Base class for application logic objects '''
 
     def __init__(self, id: Optional[str]):
         self.id = id
-
-    @classmethod
-    @abstractmethod
-    def get_dao(cls) -> AbstractDAO:
-        raise NotImplementedError
-
-    @classmethod
-    @abstractmethod
-    def from_db_object(cls, db_object: Dict[str, Any]) -> AbstractModel:
-        raise NotImplementedError
 
     @abstractmethod
     def to_db_object(self) -> Dict[str, Any]:
         raise NotImplementedError
 
-    @classmethod
-    def get_from_id(cls, id: str) -> AbstractModel:
-        db_object = cls.get_dao().get_from_id(id)
+
+class AbstractHandler(ABC):
+    ''' Base handler class for application logic objects '''
+
+    @inject
+    def __init__(self, model_cls: Type[AbstractModel], dao: AbstractDAO):
+        self.model_cls = model_cls
+        self.dao = dao
+
+    @abstractmethod
+    def from_db_object(self, db_object: Dict[str, Any]) -> AbstractModel:
+        raise NotImplementedError
+
+    def get_from_id(self, id: str) -> AbstractModel:
+        db_object = self.dao.get_from_id(id)
         if db_object is not None:
-            return cls.from_db_object(db_object)
+            return self.from_db_object(db_object)
         else:
             raise ObjectIdNotFoundError(id)
