@@ -13,6 +13,8 @@ from dao.requests_dao import RequestsDAO
 from dao.users_dao import RequestersDAO, VolunteersDAO, ShopOwnersDAO
 from db import db
 from model.item import ItemHandler
+from model.location.address import AddressHandler
+from model.location.geocoding import AddressLocator
 from model.request import RequestHandler
 from model.user import RequesterHandler, VolunteerHandler, ShopOwnerHandler, UserHandlerResolver
 from spec import get_spec_as_html
@@ -24,6 +26,8 @@ def configure_model_handlers(binder: Binder) -> None:
     binder.bind(UserHandlerResolver, to=UserHandlerResolver, scope=singleton)
     binder.bind(ItemHandler, to=ItemHandler, scope=singleton)
     binder.bind(RequestHandler, to=RequestHandler, scope=singleton)
+    binder.bind(AddressLocator, to=AddressLocator, scope=singleton)
+    binder.bind(AddressHandler, to=AddressHandler, scope=singleton)
 
 def configure_daos(binder: Binder) -> None:
     binder.bind(RequestersDAO, to=RequestersDAO(db), scope=singleton)
