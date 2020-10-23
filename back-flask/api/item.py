@@ -2,14 +2,14 @@ from flask import Response, request, make_response, jsonify
 
 from api.http_status import OK, BAD_REQUEST, UNPROCESSABLE_ENTITY, UNAUTHORIZED
 from model.exception import ShopDoesNotExistError, UserSessionIdNotFoundError, UnauthorizedAccessError
-from model.item import Item
+from model.item import ItemHandler
 from spec import DocumentedBlueprint
 
 item = DocumentedBlueprint('item', __name__)
 
 
 @item.route('/items/findByShopAndCategory', methods=['GET'])
-def find_by_shop_and_category() -> Response:
+def find_by_shop_and_category(item_handler: ItemHandler) -> Response:
     '''
     ---
     get:
@@ -49,11 +49,11 @@ def find_by_shop_and_category() -> Response:
     '''
     shop_id = request.args.get('shopId', default=None, type=str)
     category = request.args.get('category', default=None, type=str)
-    return make_response(jsonify(Item.get_items_by_shop_and_category(shop_id, category)), OK)
+    return make_response(jsonify(item_handler.get_items_by_shop_and_category(shop_id, category)), OK)
 
 
 @item.route('/item', methods=['POST'])
-def add_item() -> Response:
+def add_item(item_handler: ItemHandler) -> Response:
     '''
     ---
     post:
@@ -98,7 +98,7 @@ def add_item() -> Response:
     body = request.json
     try:
         return make_response(
-            Item.add_item(
+            item_handler.add_item(
                 name=body['item']['name'],
                 price=body['item']['price'],
                 category=body['item']['category'],

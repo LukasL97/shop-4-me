@@ -4,14 +4,14 @@ from flask import Response, make_response, jsonify
 from api.http_status import OK, BAD_REQUEST, UNAUTHORIZED, UNPROCESSABLE_ENTITY, NOT_FOUND
 from model.exception import UserSessionIdNotFoundError, ObjectIdNotFoundError, UnauthorizedAccessError, \
     UnexpectedRequestStatusError, UnexpectedUserTypeError
-from model.request import Request
+from model.request import RequestHandler
 from spec import DocumentedBlueprint
 
 request = DocumentedBlueprint('request', __name__)
 
 
 @request.route('/request', methods=['POST'])
-def create_request() -> Response:
+def create_request(request_handler: RequestHandler) -> Response:
     '''
     ---
     post:
@@ -55,7 +55,7 @@ def create_request() -> Response:
     body = flask.globals.request.json
     try:
         return make_response(
-            Request.create_request(
+            request_handler.create_request(
                 items=body['items'],
                 session_id=body['sessionId']
             ),
@@ -70,7 +70,7 @@ def create_request() -> Response:
 
 
 @request.route('/request/submit', methods=['PATCH'])
-def submit_request() -> Response:
+def submit_request(request_handler: RequestHandler) -> Response:
     '''
     ---
     patch:
@@ -104,7 +104,7 @@ def submit_request() -> Response:
     body = flask.globals.request.json
     try:
         return make_response(
-            Request.submit_request(
+            request_handler.submit_request(
                 request_id=body['request'],
                 session_id=body['sessionId']
             ),
@@ -123,7 +123,7 @@ def submit_request() -> Response:
 
 
 @request.route('/request/accept', methods=['PATCH'])
-def accept_request() -> Response:
+def accept_request(request_handler: RequestHandler) -> Response:
     '''
     ---
     patch:
@@ -157,7 +157,7 @@ def accept_request() -> Response:
     body = flask.globals.request.json
     try:
         return make_response(
-            Request.accept_request(
+            request_handler.accept_request(
                 request_id=body['request'],
                 session_id=body['sessionId']
             ),
@@ -174,7 +174,7 @@ def accept_request() -> Response:
 
 
 @request.route('/requests/open', methods=['GET'])
-def get_open_requests() -> Response:
+def get_open_requests(request_handler: RequestHandler) -> Response:
     '''
     ---
     get:
@@ -206,7 +206,7 @@ def get_open_requests() -> Response:
     '''
     body = flask.globals.request.json
     try:
-        return make_response(jsonify(Request.get_open_requests(body['sessionId'])), OK)
+        return make_response(jsonify(request_handler.get_open_requests(body['sessionId'])), OK)
     except KeyError:
         return make_response('Request body did not contain required information', BAD_REQUEST)
     except UserSessionIdNotFoundError:
@@ -214,7 +214,7 @@ def get_open_requests() -> Response:
 
 
 @request.route('/requests/own', methods=['GET'])
-def get_own_requests() -> Response:
+def get_own_requests(request_handler: RequestHandler) -> Response:
     '''
     ---
     get:
@@ -250,9 +250,9 @@ def get_own_requests() -> Response:
     body = flask.globals.request.json
     try:
         if body['userType'] == 'Requester':
-            get_own_requests_f = Request.get_requesters_own_requests
+            get_own_requests_f = request_handler.get_requesters_own_requests
         elif body['userType'] == 'Volunteer':
-            get_own_requests_f = Request.get_volunteers_own_requests
+            get_own_requests_f = request_handler.get_volunteers_own_requests
         else:
             raise UnexpectedUserTypeError
         return make_response(
