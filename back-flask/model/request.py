@@ -7,17 +7,10 @@ from bson import ObjectId
 from dao.requests_dao import RequestsDAO
 from db import db
 from model.abstract_model import AbstractModel
+from model.exception import UnauthorizedAccessError, UnexpectedRequestStatusError
 from model.item import Item
-from model.user import Requester
-
-
-class RequestStatus(object):
-
-    CREATED: int = 0
-    SUBMITTED: int = 1
-    IN_PROGRESS: int = 2
-    DELIVERED: int = 3
-    PAID: int = 4
+from model.request_status import RequestStatus
+from model.user import Requester, Volunteer
 
 
 class Request(AbstractModel):
@@ -94,8 +87,39 @@ class Request(AbstractModel):
         return id
 
     @classmethod
+    def submit_request(cls, request_id: str, session_id: str) -> str:
+        requester_id = Requester.get_user_id_from_session_id(session_id)
+        request = cls.get_from_id(request_id)
+        if not request.requester == requester_id:
+            raise UnauthorizedAccessError
+        if not request.status == RequestStatus.CREATED:
+            raise UnexpectedRequestStatusError(request.status, RequestStatus.CREATED)
+        cls.get_dao().update_status(request.id, RequestStatus.SUBMITTED)
+        return 'Request submitted successfully'
+
+    @classmethod
     def get_requesters_own_requests(cls, session_id: str) -> List[Dict[str, Any]]:
         requester_id = Requester.get_user_id_from_session_id(session_id)
         requests = [cls.from_db_object(db_obj) for db_obj in cls.get_dao().get_requests_by_requester(requester_id)]
         return [request.to_response() for request in requests]
 
+    @classmethod
+    def get_open_requests(cls, session_id: str) -> List[Dict[str, Any]]:
+        Volunteer.get_user_id_from_session_id(session_id)
+        requests = [cls.from_db_object(db_obj) for db_obj in cls.get_dao().get_open_requests()]
+        return [request.to_response() for request in requests]
+
+    @classmethod
+    def get_volunteers_own_requests(cls, session_id: str) -> List[Dict[str, Any]]:
+        volunteer_id = Volunteer.get_user_id_from_session_id(session_id)
+        requests = [cls.from_db_object(db_obj) for db_obj in cls.get_dao().get_requests_by_volunteer(volunteer_id)]
+        return [request.to_response() for request in requests]
+
+    @classmethod
+    def accept_request(cls, request_id: str, session_id: str) -> str:
+        volunteer_id = Volunteer.get_user_id_from_session_id(session_id)
+        request = cls.get_from_id(request_id)
+        if not request.status == RequestStatus.SUBMITTED:
+            raise UnexpectedRequestStatusError(request.status, RequestStatus.SUBMITTED)
+        cls.get_dao().update_volunteer_and_status(request.id, volunteer_id, RequestStatus.IN_PROGRESS)
+        return 'Request accepted successfully'
