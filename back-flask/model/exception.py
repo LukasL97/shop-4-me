@@ -30,3 +30,9 @@ class UnexpectedRequestStatusError(RuntimeError):
     def __init__(self, actual: int, expected: int):
         self.actual: int = actual
         self.expected: int = expected
+
+class UnexpectedNumberOfLocationsForAddressError(RuntimeError):
+
+    def __init__(self, number_of_locations: int, address: str):
+        self.number_of_locations: int = number_of_locations
+        self.address: str = address
