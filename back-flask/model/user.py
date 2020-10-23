@@ -128,15 +128,6 @@ class Requester(User):
         db_obj['address'] = None if self.address is None else self.address.to_db_object()
         return db_obj
 
-    # @classmethod
-    # def set_address(cls, street: str, zip: str, country: str, session_id: str) -> str:
-    #     if session_id not in cls.active_user_sessions:
-    #         raise UserSessionIdNotFoundError
-    #     requester = cls.active_user_sessions[session_id]
-    #     address = Address(street, zip, country)
-    #     requester.address = address
-    #     cls.get_dao().update_address(requester.id, address)
-
 
 class RequesterHandler(UserHandler):
 
