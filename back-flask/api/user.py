@@ -1,10 +1,10 @@
 
 from flask import request, Response, make_response
 
-from api.http_status import OK, BAD_REQUEST, NOT_FOUND, UNAUTHORIZED, CONFLICT
+from api.http_status import OK, BAD_REQUEST, NOT_FOUND, UNAUTHORIZED, CONFLICT, UNPROCESSABLE_ENTITY
 from model.exception import UnexpectedUserTypeError, UserNotFoundError, IncorrectPasswordError, \
-    UserAlreadyRegisteredError, UserSessionIdNotFoundError
-from model.user import UserHandlerResolver
+    UserAlreadyRegisteredError, UserSessionIdNotFoundError, UnexpectedNumberOfLocationsForAddressError
+from model.user import UserHandlerResolver, RequesterHandler
 from spec import DocumentedBlueprint
 
 user = DocumentedBlueprint('user', __name__)
@@ -152,3 +152,57 @@ def logout(resolver: UserHandlerResolver) -> Response:
     except UserSessionIdNotFoundError:
         return make_response('User of type %s with session id %s not found' % (user_data['userType'], user_data['sessionId']), NOT_FOUND)
 
+
+@user.route('/requester/address', methods=['PUT'])
+def set_requester_address(requester_handler: RequesterHandler) -> Response:
+    '''
+    ---
+    put:
+        summary: set your own address as a requester
+        description: The address is resolved to a geolocation (latitude, longitude) internally, via an external geocoding API.
+        requestBody:
+            required: true
+            content:
+                application/json:
+                    schema:
+                        type: object
+                        properties:
+                            address:
+                                type: object
+                                properties:
+                                    street:
+                                        type: string
+                                        description: street incl. house number in the format common in the according country (e.g. "Junailijankuja 5B")
+                                    zip:
+                                        type: string
+                                        description: zip code (e.g. "00520")
+                                    country:
+                                        type: string
+                                        description: country name in english (but national language should also work) (e.g. "Finland")
+                            sessionId:
+                                type: string
+                                description: session id of the requester setting their address
+        responses:
+            200:
+                description: address set successfully
+            400:
+                description: incorrect request body
+            404:
+                description: session id did not refer to any logged in user of type Requester
+            422:
+                description: the given address could not be resolved to exactly one geolocation via the external geocoding API
+    '''
+    user_data = request.json
+    try:
+        return make_response(requester_handler.set_address(
+            street=user_data['address']['street'],
+            zip=user_data['address']['zip'],
+            country=user_data['address']['country'],
+            session_id=user_data['sessionId']
+        ), OK)
+    except KeyError:
+        return make_response('Request body did not contain required information', BAD_REQUEST)
+    except UserSessionIdNotFoundError:
+        return make_response('User of type Requester with session id %s not found' % user_data['sessionId'], NOT_FOUND)
+    except UnexpectedNumberOfLocationsForAddressError as error:
+        return make_response('Address "%s" resolved to %d geolocations' % (error.address, error.number_of_locations), UNPROCESSABLE_ENTITY)
