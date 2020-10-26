@@ -1,4 +1,5 @@
 import React, { Component } from 'react'
+import axios from 'axios'
 import Login from './Login'
 import { BrowserRouter as Router, Route, Link, Switch } from 'react-router-dom'
 import Navbar from './components/Navbar'
@@ -41,13 +42,24 @@ const data = items.map((item) => {
 
 class App extends Component {
   state = {
-    data: data,
+    data: [],
     cart: [],
   }
   addItemToCart = (item) => {
     this.setState({ cart: [...this.state.cart, item] })
   }
+  componentDidMount() {
+    this.fetchData()
+  }
+
+  fetchData = async () => {
+    const url = 'http://localhost:5000/items/Catagory'
+    const response = await axios.get(url)
+    const data = response.data
+    this.setState({ data })
+  }
   render() {
+    console.log(this.state.data)
     return (
       <Router>
         <Switch>
