@@ -9,7 +9,7 @@ from dao.users_dao import UsersDAO, RequestersDAO, VolunteersDAO, ShopOwnersDAO
 from model.abstract_model import AbstractModel, AbstractHandler
 from model.exception import UserNotFoundError, IncorrectPasswordError, UserAlreadyRegisteredError, \
     UserSessionIdNotFoundError, UnexpectedUserTypeError
-from model.location.address import Address
+# from model.location.address import Address
 
 
 class UserHandlerResolver(object):

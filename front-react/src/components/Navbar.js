@@ -3,8 +3,10 @@ import { Link, NavLink } from 'react-router-dom'
 import PropTypes from 'prop-types'
 import '../assets/styles/navbar.scss'
 import Button from './Button'
+import { parseCookies } from '../utils/cookies'
 
 const Navbar = (props) => {
+  const accessToken = parseCookies().accessToken
   return (
     <div className='menu'>
       <div className='logo'>
@@ -29,27 +31,29 @@ const Navbar = (props) => {
             Eligible
           </NavLink>
         </li>
-
         <li>
           <NavLink exact activeClassName='active' to='/shop-now'>
             Shop Now
           </NavLink>
         </li>
-        <li>
-          <NavLink exact activeClassName='active' to='/cart'>
-            <i className='fas fa-shopping-cart'></i>
-            {props.cart && <sup>123</sup>}
-          </NavLink>
-        </li>
-
+        {accessToken && (
+          <li>
+            <NavLink exact activeClassName='active' to='/cart'>
+              <i className='fas fa-shopping-cart'></i>
+              {props.cart && <sup>123</sup>}
+            </NavLink>
+          </li>
+        )}
         <li>
           <NavLink exact activeClassName='active' to='/login'>
             Login
           </NavLink>
         </li>
-        <li>
-          <Button text='Logout' />
-        </li>
+        {accessToken && (
+          <li>
+            <Button text='Logout' />
+          </li>
+        )}
       </ul>
     </div>
   )

@@ -19,6 +19,7 @@ import toilet from './assets/images/toilet.jpg'
 import ready_made_food from './assets/images/ready_made_food.jpg'
 import soft_drinks from './assets/images/soft_drinks.jpg'
 import Cart from './components/Cart'
+import PrivateRoute from './components/shared/PrivateRoute'
 
 const images = [
   alcohol,
@@ -59,7 +60,7 @@ class App extends Component {
               <CardDetail {...props} data={this.state.data} />
             )}
           />
-          <Route path='/cart' component={Cart} />
+          <PrivateRoute path='/cart' component={Cart} />
           <Route
             exact
             path='/'
