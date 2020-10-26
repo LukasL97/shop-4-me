@@ -21,6 +21,9 @@ import ready_made_food from './assets/images/ready_made_food.jpg'
 import soft_drinks from './assets/images/soft_drinks.jpg'
 import Cart from './components/Cart'
 import PrivateRoute from './components/shared/PrivateRoute'
+import { parseCookies } from './utils/cookies'
+
+const accessToken = parseCookies().access_token
 
 const images = [
   alcohol,
@@ -42,8 +45,9 @@ const data = items.map((item) => {
 
 class App extends Component {
   state = {
-    data: [],
+    data: data,
     cart: [],
+    accessToken: accessToken,
   }
   addItemToCart = (item) => {
     this.setState({ cart: [...this.state.cart, item] })
@@ -72,7 +76,11 @@ class App extends Component {
               <CardDetail {...props} data={this.state.data} />
             )}
           />
-          <PrivateRoute path='/cart' component={Cart} />
+          <PrivateRoute
+            path='/cart'
+            accessToken={this.state.accessToken}
+            component={Cart}
+          />
           <Route
             exact
             path='/'

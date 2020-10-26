@@ -1,12 +1,26 @@
-import React from 'react'
-import { Link, NavLink } from 'react-router-dom'
+import React, { useState, useEffect } from 'react'
+import axios from 'axios'
+import { Link, NavLink, Redirect } from 'react-router-dom'
 import PropTypes from 'prop-types'
 import '../assets/styles/navbar.scss'
 import Button from './Button'
-import { parseCookies } from '../utils/cookies'
+import { parseCookies, deleteCookie } from '../utils/cookies'
 
 const Navbar = (props) => {
-  const accessToken = parseCookies().accessToken
+  const [auth, setAuth] = useState('')
+
+  useEffect(() => {
+    const accessToken = parseCookies().access_token
+    setAuth(accessToken)
+  }, [auth])
+
+  const handleLogout = async () => {
+    const url = 'http://localhost:5000/logout'
+    await axios.delete(url)
+    deleteCookie()
+    return <Redirect to='/login' />
+  }
+
   return (
     <div className='menu'>
       <div className='logo'>
@@ -36,7 +50,7 @@ const Navbar = (props) => {
             Shop Now
           </NavLink>
         </li>
-        {accessToken && (
+        {auth && (
           <li>
             <NavLink exact activeClassName='active' to='/cart'>
               <i className='fas fa-shopping-cart'></i>
@@ -44,14 +58,17 @@ const Navbar = (props) => {
             </NavLink>
           </li>
         )}
-        <li>
-          <NavLink exact activeClassName='active' to='/login'>
-            Login
-          </NavLink>
-        </li>
-        {accessToken && (
+        {!auth && (
           <li>
-            <Button text='Logout' />
+            <NavLink exact activeClassName='active' to='/login'>
+              Login
+            </NavLink>
+          </li>
+        )}
+
+        {auth && (
+          <li>
+            <Button text='Logout' onClick={handleLogout} />
           </li>
         )}
       </ul>
