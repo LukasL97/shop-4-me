@@ -78,18 +78,21 @@ function LoginRegister({to, registerComponent}) {
 
     function handleSubmit(event) {
 		event.preventDefault();
-        let data = {
-            userType: event.target.usertype.value,
+		const userType = event.target.usertype.value
+
+        const data = {
+            userType: userType,
             loginName: event.target.email.value,
             password: event.target.password.value,
             firstName: event.target.firstname.value,
             lastName: event.target.lastname.value
         }
 
-        var callback = (res) => {
+        const callback = (res) => {
 			console.log(res);
             const cookies = new Cookies();
             cookies.set('access_token', res.data, { path: '/', expires: new Date(new Date().getTime() + 60 * 60 * 1000) })
+            cookies.set('user_type', userType, { path: '/', expires: new Date(new Date().getTime() + 60 * 60 * 1000) })
 			to()
 		}
         axios.post("http://localhost:5000/register", data).then(callback)
