@@ -7,7 +7,8 @@ var ReactRouter = require('react-router-dom')
 
 function Login() {
 	let history = ReactRouter.useHistory()
-	const [registerComponent, setRegisterComponent] = useState(<RegisterVolunteer />);
+	const [userType, setUserType] = useState("Requester");
+	const [registerComponent, setRegisterComponent] = useState(<RegisterRequester />);
 	
 	function gotoHome() {
 		history.push('/')
@@ -19,8 +20,8 @@ function Login() {
 				<section className="section">
 					<h1 className="title">Welcome to <strong>Shop-4-Me</strong></h1>
 					<h2 className="title">Friendly neighborhood shopping assistant</h2>
-					<LoginUserTypeSelector setRegisterComponent={setRegisterComponent}/>
-					<LoginSignIn to={gotoHome}/>
+					<LoginUserTypeSelector setUserType={setUserType} setRegisterComponent={setRegisterComponent}/>
+					<LoginSignIn to={gotoHome} userType={userType}/>
 				</section>
 				<section className="section">
 					<LoginRegister to={gotoHome} registerComponent={registerComponent}/>
@@ -30,21 +31,23 @@ function Login() {
     )
 }
 
-function LoginSignIn({to}) {
+function LoginSignIn({ to, userType }) {
 
     function handleSubmit(event) {
-        event.preventDefault();
-        let data = {
-            userType: "Requester",
+		event.preventDefault();
+		
+        const data = {
+            userType: userType,
             loginName: event.target.email.value,
             password: event.target.password.value
         }
         console.log(data);
 
-        var callback = (res) => {
+        const callback = (res) => {
             console.log(res)
             const cookies = new Cookies();
             cookies.set('access_token', res.data, { path: '/', expires: new Date(new Date().getTime() + 60 * 60 * 1000) })
+            cookies.set('user_type', userType, { path: '/', expires: new Date(new Date().getTime() + 60 * 60 * 1000) })
             to()
         }
 
@@ -78,18 +81,21 @@ function LoginRegister({to, registerComponent}) {
 
     function handleSubmit(event) {
 		event.preventDefault();
-        let data = {
-            userType: event.target.usertype.value,
+		const userType = event.target.usertype.value
+
+        const data = {
+            userType: userType,
             loginName: event.target.email.value,
             password: event.target.password.value,
             firstName: event.target.firstname.value,
             lastName: event.target.lastname.value
         }
 
-        var callback = (res) => {
+        const callback = (res) => {
 			console.log(res);
             const cookies = new Cookies();
             cookies.set('access_token', res.data, { path: '/', expires: new Date(new Date().getTime() + 60 * 60 * 1000) })
+            cookies.set('user_type', userType, { path: '/', expires: new Date(new Date().getTime() + 60 * 60 * 1000) })
 			to()
 		}
         axios.post("http://localhost:5000/register", data).then(callback)
@@ -303,14 +309,15 @@ function RegisterShowOwner() {
     )
 }
 
-function LoginUserTypeSelector({ setRegisterComponent }) {
+function LoginUserTypeSelector({ setUserType, setRegisterComponent }) {
 	let selections = [
-		{ label: 'Volunteer',  registerComponent: <RegisterVolunteer /> },
-		{ label: 'Requester',  registerComponent: <RegisterRequester /> },
-		{ label: 'Shop owner', registerComponent: <RegisterShowOwner /> }
+		{ label: 'Requester',  value: 'Requester', registerComponent: <RegisterRequester /> },
+		{ label: 'Volunteer',  value: 'Volunteer', registerComponent: <RegisterVolunteer /> },
+		{ label: 'Shop owner', value: 'ShopOwner', registerComponent: <RegisterShowOwner /> }
 	]
 
 	function handleOnChange(event) {
+		setUserType(selections[event.target.value].value)
 		setRegisterComponent(selections[event.target.value].registerComponent)
 	}
 
