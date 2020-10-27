@@ -1,4 +1,5 @@
 import React, { Component } from 'react'
+import axios from 'axios'
 import Login from './Login'
 import { BrowserRouter as Router, Route, Link, Switch } from 'react-router-dom'
 import Navbar from './components/Navbar'
@@ -19,6 +20,10 @@ import toilet from './assets/images/toilet.jpg'
 import ready_made_food from './assets/images/ready_made_food.jpg'
 import soft_drinks from './assets/images/soft_drinks.jpg'
 import Cart from './components/Cart'
+import PrivateRoute from './components/shared/PrivateRoute'
+import { parseCookies } from './utils/cookies'
+
+const accessToken = parseCookies().access_token
 
 const images = [
   alcohol,
@@ -42,11 +47,23 @@ class App extends Component {
   state = {
     data: data,
     cart: [],
+    accessToken: accessToken,
   }
   addItemToCart = (item) => {
     this.setState({ cart: [...this.state.cart, item] })
   }
+  componentDidMount() {
+    this.fetchData()
+  }
+
+  fetchData = async () => {
+    const url = 'http://localhost:5000/items/Catagory'
+    const response = await axios.get(url)
+    const data = response.data
+    this.setState({ data })
+  }
   render() {
+    console.log(this.state.data)
     return (
       <Router>
         <Switch>
@@ -59,7 +76,11 @@ class App extends Component {
               <CardDetail {...props} data={this.state.data} />
             )}
           />
-          <Route path='/cart' component={Cart} />
+          <PrivateRoute
+            path='/cart'
+            accessToken={this.state.accessToken}
+            component={Cart}
+          />
           <Route
             exact
             path='/'
