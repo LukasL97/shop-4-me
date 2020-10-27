@@ -7,8 +7,7 @@ export const parseCookies = () => {
   const cookieObj = {}
   const cookiesArr = document.cookie.split(';').map((item) => item.split('='))
   for (const [key, value] of cookiesArr) {
-    cookieObj[key] = value.trim()
-    // some mine change 
+    cookieObj[key.trim()] = value.trim()
   }
   return cookieObj
 }

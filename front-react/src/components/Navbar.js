@@ -16,7 +16,7 @@ const Navbar = (props) => {
 
   const handleLogout = async () => {
     const url = 'http://localhost:5000/logout'
-    await axios.delete(url)
+    // await axios.delete(url)
     deleteCookie()
     return <Redirect to='/login' />
   }
