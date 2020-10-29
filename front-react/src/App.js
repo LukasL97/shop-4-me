@@ -9,18 +9,22 @@ import Home from './components/Home'
 import NotFound from './components/NotFound'
 import CardDetail from './components/CardDetail'
 import { items } from './dummy_data/items'
+import { requests } from './dummy_data/requests'
 
 import CartCard from './components/CartCard'
 import PrivateRoute from './components/shared/PrivateRoute'
 import { parseCookies } from './utils/cookies'
 import CartCards from './components/CartCards'
 import { getRandomImage } from './utils/get-random-image'
+import Requests from './components/Requests'
+import { useFetch } from './services/useFetch'
 
 const accessToken = parseCookies().access_token
 
 const App = (props) => {
   const [data, setData] = useState([])
-  const [cart, setCart] = useState(items)
+  const [cart, setCart] = useState([])
+  const [requestData, setRequests] = useState(requests)
   useEffect(() => {
     fetchData()
     const cartStr = JSON.stringify(cart)
@@ -44,6 +48,7 @@ const App = (props) => {
       return item
     })
     setData(data)
+    // setRequests()
   }
 
   return (
@@ -69,6 +74,10 @@ const App = (props) => {
         <PrivateRoute
           path='/cart'
           component={(props) => <CartCard {...props} cart={cart} />}
+        />
+        <PrivateRoute
+          path='/requests'
+          component={(props) => <Requests {...props} requests={requestData} />}
         />
 
         <Route

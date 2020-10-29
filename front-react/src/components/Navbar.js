@@ -49,16 +49,19 @@ const Navbar = (props) => {
             Eligible
           </NavLink>
         </li>
-        <li>
-          <NavLink exact activeClassName='active' to='/shop-now'>
-            Shop Now
-          </NavLink>
-        </li>
+        {auth && (
+          <li>
+            <NavLink exact activeClassName='active' to='/requests'>
+              Requests
+            </NavLink>
+          </li>
+        )}
+
         {auth && (
           <li>
             <NavLink exact activeClassName='active' to='/carts'>
               <i className='fas fa-shopping-cart'></i>
-              {cart && <sup>{cart.length}</sup>}
+              {cart && cart.length > 0 && <sup>{cart.length}</sup>}
             </NavLink>
           </li>
         )}

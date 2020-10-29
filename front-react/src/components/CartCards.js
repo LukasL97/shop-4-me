@@ -18,11 +18,19 @@ const CartCards = ({ cart, removeItemFromCart }) => {
   })
   return (
     <Layout>
-      <div>
-        <p>List of products on your cart</p>
-        <small>Total prices of the items:{sum} Euro</small>
-      </div>
-      <div>{items}</div>
+      {cart.length > 0 ? (
+        <div>
+          <p>List of products on your cart</p>
+          <small>Total prices of the items:{sum} Euro</small>
+        </div>
+      ) : (
+        ''
+      )}
+      {cart.length > 0 ? (
+        <div>{items}</div>
+      ) : (
+        <p>You do not have items in the shopping cart.</p>
+      )}
     </Layout>
   )
 }

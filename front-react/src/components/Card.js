@@ -16,6 +16,7 @@ const Card = ({
   index,
 }) => {
   const [visibility, setVisibility] = useState(false)
+  let formattedPrice = (price / 10).toFixed(2)
   return (
     <div className='card'>
       <Link to={`/card/${id}`}>
@@ -44,7 +45,7 @@ const Card = ({
           <i class='fas fa-star'></i>
         </div>
         <div>
-          <small>{price /10}</small>
+          <small>{formattedPrice}</small>
         </div>
       </div>
     </div>
