@@ -75,11 +75,7 @@ class App extends Component {
               <CardDetail {...props} data={this.state.data} />
             )}
           />
-          <PrivateRoute
-            path='/cart'
-            accessToken={this.state.accessToken}
-            component={Cart}
-          />
+          <PrivateRoute path='/cart' component={Cart} />
           <Route
             exact
             path='/'

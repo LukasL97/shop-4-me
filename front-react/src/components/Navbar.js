@@ -20,6 +20,7 @@ const Navbar = (props) => {
     deleteCookie()
     return <Redirect to='/login' />
   }
+  console.log(auth)
 
   return (
     <div className='menu'>
