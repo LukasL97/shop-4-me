@@ -1,4 +1,4 @@
-import React, { Component } from 'react'
+import React, { Component, useState, useEffect } from 'react'
 import axios from 'axios'
 import Login from './Login'
 import { BrowserRouter as Router, Route, Link, Switch } from 'react-router-dom'
@@ -10,84 +10,82 @@ import NotFound from './components/NotFound'
 import CardDetail from './components/CardDetail'
 import { items } from './dummy_data/items'
 
-import alcohol from './assets/images/alcohol.jpg'
-import bakery from './assets/images/bakery.jpg'
-import frozen from './assets/images/frozen.jpg'
-import fruits from './assets/images/fruits.jpg'
-import meat from './assets/images/meat.jpg'
-import milk from './assets/images/milk.jpg'
-import toilet from './assets/images/toilet.jpg'
-import ready_made_food from './assets/images/ready_made_food.jpg'
-import soft_drinks from './assets/images/soft_drinks.jpg'
-import Cart from './components/Cart'
+import CartCard from './components/CartCard'
 import PrivateRoute from './components/shared/PrivateRoute'
 import { parseCookies } from './utils/cookies'
+import CartCards from './components/CartCards'
+import { getRandomImage } from './utils/get-random-image'
 
 const accessToken = parseCookies().access_token
 
-const images = [
-  alcohol,
-  bakery,
-  frozen,
-  fruits,
-  meat,
-  milk,
-  toilet,
-  ready_made_food,
-  soft_drinks,
-]
+const App = (props) => {
+  const [data, setData] = useState([])
+  const [cart, setCart] = useState(items)
+  useEffect(() => {
+    fetchData()
+    const cartStr = JSON.stringify(cart)
+    localStorage.setItem('cart', cartStr)
+  }, [cart])
 
-class App extends Component {
-  state = {
-    data: [],
-    cart: [],
-    accessToken: accessToken,
-  }
-  addItemToCart = (item) => {
-    this.setState({ cart: [...this.state.cart, item] })
-  }
-  componentDidMount() {
-    this.fetchData()
+  const addItemToCart = (item) => setCart([...cart, item])
+
+  const removeItemFromCart = (index) => {
+    const cartItems = [...cart]
+    cartItems.splice(index, 1)
+    setCart(cartItems)
   }
 
-  fetchData = async () => {
+  const fetchData = async () => {
     const url = 'http://localhost:5000/items/findByShopAndCategory'
     const response = await axios.get(url)
 
     const data = response.data.map((item) => {
-      let randIndex = Math.floor(Math.random() * images.length)
-      let image = images[randIndex]
-      item.image = image
+      item.image = getRandomImage()
       return item
     })
-    this.setState({ data })
+    setData(data)
   }
-  render() {
-    return (
-      <Router>
-        <Switch>
-          <Route exact path='/login' component={Login} />
-          <Route exact path='/about' component={About} />
-          <Route
-            exact
-            path='/card/:id'
-            component={(props) => (
-              <CardDetail {...props} data={this.state.data} />
-            )}
-          />
-          <PrivateRoute path='/cart' component={Cart} />
-          <Route
-            exact
-            path='/'
-            component={() => (
-              <Home data={this.state.data} addItemToCart={this.addItemToCart} />
-            )}
-          />
-          <Route component={NotFound} />
-        </Switch>
-      </Router>
-    )
-  }
+
+  return (
+    <Router>
+      <Switch>
+        <Route exact path='/login' component={Login} />
+        <Route exact path='/about' component={About} />
+        <Route
+          exact
+          path='/card/:id'
+          component={(props) => <CardDetail {...props} data={data} />}
+        />
+        <PrivateRoute
+          path='/carts'
+          component={(props) => (
+            <CartCards
+              {...props}
+              cart={cart}
+              removeItemFromCart={removeItemFromCart}
+            />
+          )}
+        />
+        <PrivateRoute
+          path='/cart'
+          component={(props) => <CartCard {...props} cart={cart} />}
+        />
+
+        <Route
+          exact
+          path='/'
+          component={() => (
+            <Home
+              data={data}
+              addItemToCart={addItemToCart}
+              removeItemFromCart={removeItemFromCart}
+            />
+          )}
+        />
+        <Route component={NotFound} />
+      </Switch>
+    </Router>
+  )
 }
 
 export default App
