@@ -18,6 +18,7 @@ import CartCards from './components/CartCards'
 import { getRandomImage } from './utils/get-random-image'
 import Requests from './components/Requests'
 import { useFetch } from './services/useFetch'
+import AddItem from './components/AddItem'
 
 const accessToken = parseCookies().access_token
 
@@ -79,6 +80,7 @@ const App = (props) => {
           path='/requests'
           component={(props) => <Requests {...props} requests={requestData} />}
         />
+        <PrivateRoute path='/add-product' component={(props) => <AddItem />} />
 
         <Route
           exact
