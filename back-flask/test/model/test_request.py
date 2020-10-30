@@ -8,6 +8,7 @@ from model.exception import UserSessionIdNotFoundError, ObjectIdNotFoundError, U
     UnexpectedRequestStatusError, MissingDeliveryAddressError
 from model.item import Item, ItemHandler
 from model.location.address import AddressHandler, Address
+from model.product_details import ProductDetails
 from model.request import RequestHandler, Request
 from model.request_status import RequestStatus
 from model.user import Requester, Volunteer, ShopOwnerHandler, RequesterHandler, VolunteerHandler
@@ -42,12 +43,14 @@ class RequestHandlerTest(TestCase):
             42.42,
             'category',
             '5f7c28c6e979c6a33a1f3f79',
+            ProductDetails('', {})
         )
         item_2 = Item(
             'item2',
             13.37,
             'category',
             '5f7c28c6e979c6a33a1f3f79',
+            ProductDetails('', {})
         )
         item_1_id = self.items_dao.store_one(item_1.to_db_object())
         item_2_id = self.items_dao.store_one(item_2.to_db_object())
@@ -205,6 +208,7 @@ class RequestHandlerTest(TestCase):
             42.42,
             'category',
             '5f7c28c6e979c6a33a1f3f79',
+            ProductDetails('', {})
         )
         item_id = self.items_dao.store_one(item.to_db_object())
         item.id = item_id
