@@ -7,16 +7,21 @@ image: node:10.15.3
 
 pipelines:
   default:
-    - step:
-        caches:
-          - node
-        script: # Modify the commands below to build your repository.
-          - npm install
-          - npm test
-          - pipe: atlassian/heroku-deploy:1.2.1
-            variables:
-              HEROKU_API_KEY: '<string>'
-              HEROKU_APP_NAME: '<string>'
-              ZIP_FILE: '<string>'
-              # WAIT: '<boolean>' # Optional.
-              # DEBUG: '<boolean>' # Optional
+    - parallel:
+        - step: # Python backend
+            script:
+              - cd back-flask
+              - pip install -r requirements.txt
+              #- python -m unittest discover ...
+        - step: # React frontend
+            caches:
+              - node
+            script:
+              - cd front-react
+              - npm install
+              - npm test
+              #- pipe: atlassian/heroku-deploy:1.2.1
+              #  variables:
+              #    HEROKU_API_KEY: '<string>'
+              #    HEROKU_APP_NAME: '<string>'
+              #    ZIP_FILE: '<string>'
