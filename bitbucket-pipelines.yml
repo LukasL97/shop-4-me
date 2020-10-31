@@ -3,17 +3,20 @@
 # Only use spaces to indent your .yml configuration.
 # -----
 # You can specify a custom docker image from Docker Hub as your build environment.
-image: node:10.15.3
+
 
 pipelines:
   default:
     - parallel:
         - step: # Python backend
+            name: Test backend
+            image: python:3.7.2
             script:
               - cd back-flask
               - pip install -r requirements.txt
-              #- python -m unittest discover ...
+              - python -m unittest discover test
         - step: # React frontend
+            image: node:10.15.3
             caches:
               - node
             script:
