@@ -133,6 +133,7 @@ class RequesterHandler(UserHandler):
 
     @inject
     def __init__(self, dao: RequestersDAO, address_handler: AddressHandler):
+        self.active_user_sessions: Dict[str, Requester] = {}
         self.dao = dao
         self.address_handler: AddressHandler = address_handler
         self.model_cls: Type[Requester] = Requester

@@ -1,3 +1,4 @@
+from datetime import datetime
 from typing import List, Dict, Any
 
 from bson import ObjectId
@@ -26,3 +27,9 @@ class RequestsDAO(AbstractDAO):
 
     def update_volunteer_and_status(self, id: str, volunteer_id: str, status: int) -> None:
         self.collection.update_one({'_id': ObjectId(id)}, {'$set': {'volunteer': ObjectId(volunteer_id), 'status': status}})
+
+    def update_delivery_address(self, id: str, delivery_address: Dict[str, Any]) -> None:
+        self.collection.update_one({'_id': ObjectId(id)}, {'$set': {'deliveryAddress': delivery_address}})
+
+    def update_submission_date(self, id: str, submission_date: datetime) -> None:
+        self.collection.update_one({'_id': ObjectId(id)}, {'$set': {'submissionDate': submission_date}})

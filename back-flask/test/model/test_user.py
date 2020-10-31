@@ -1,12 +1,11 @@
-from typing import Tuple
 from unittest import TestCase
 
 from dao.users_dao import UsersDAO, RequestersDAO
 from model.exception import IncorrectPasswordError, UserNotFoundError, UserAlreadyRegisteredError, \
     UserSessionIdNotFoundError, UnexpectedNumberOfLocationsForAddressError
 from model.location.address import AddressHandler
-from model.location.geocoding import AddressLocator
 from model.user import User, UserHandler, RequesterHandler, Requester
+from test.model.util.stubs import AddressLocatorStub
 from test.mongodb_integration_test_setup import get_empty_local_test_db
 
 
@@ -80,16 +79,6 @@ class UserHandlerTest(TestCase):
         with self.assertRaises(UserSessionIdNotFoundError):
             self.user_handler.logout(session_id)
 
-
-class AddressLocatorStub(AddressLocator):
-
-    def __init__(self):
-        pass
-
-    def get_coordinates(self, street: str, zip: str, country: str) -> Tuple[float, float]:
-        if street == 'Some Street 42' and zip == '1337' and country == 'Funland': return 42.0, 13.37
-        if street == 'Other Street 24' and zip == '12345' and country == 'Otherland': return 23.0, 32.0
-        raise UnexpectedNumberOfLocationsForAddressError(0, street + ', ' + zip + ', ' + country)
 
 class RequesterHandlerTest(TestCase):
 

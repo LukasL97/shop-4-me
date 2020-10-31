@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from typing import Any, Dict, Optional
 
+from geopy.distance import distance
 from injector import inject
 
 from model.location.geocoding import AddressLocator
@@ -26,6 +27,18 @@ class Address(object):
                 'lng': self.lng
             }
         }
+
+    def to_response(self) -> Dict[str, Any]:
+        return self.to_db_object()
+
+    def __eq__(self, other: Address) -> bool:
+        return self.street == other.street and self.zip == other.zip and self.country == other.country and self.lat == other.lat and self.lng == other.lng
+
+    def distance_to_coordinates(self, lat: float, lng: float) -> float:
+        return distance(
+            (self.lat, self.lng),
+            (lat, lng)
+        ).kilometers
 
 
 class AddressHandler(object):

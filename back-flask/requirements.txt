@@ -10,8 +10,7 @@ apispec==4.0.0
 marshmallow==3.8.0
 apispec-webframeworks
 flask-cors
-Flask-Injector=0.12.3
-googlemaps=2.5.1
-rootpath=0.1.1
-
-
+Flask-Injector==0.12.3
+googlemaps==2.5.1
+rootpath==0.1.1
+geopy==2.0.0
