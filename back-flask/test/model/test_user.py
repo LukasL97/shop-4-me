@@ -1,9 +1,12 @@
+from typing import Tuple
 from unittest import TestCase
 
-from dao.users_dao import UsersDAO
+from dao.users_dao import UsersDAO, RequestersDAO
 from model.exception import IncorrectPasswordError, UserNotFoundError, UserAlreadyRegisteredError, \
-    UserSessionIdNotFoundError
-from model.user import User, UserHandler
+    UserSessionIdNotFoundError, UnexpectedNumberOfLocationsForAddressError
+from model.location.address import AddressHandler
+from model.location.geocoding import AddressLocator
+from model.user import User, UserHandler, RequesterHandler, Requester
 from test.mongodb_integration_test_setup import get_empty_local_test_db
 
 
@@ -76,3 +79,70 @@ class UserHandlerTest(TestCase):
         self.assertNotIn(session_id, self.user_handler.active_user_sessions)
         with self.assertRaises(UserSessionIdNotFoundError):
             self.user_handler.logout(session_id)
+
+
+class AddressLocatorStub(AddressLocator):
+
+    def __init__(self):
+        pass
+
+    def get_coordinates(self, street: str, zip: str, country: str) -> Tuple[float, float]:
+        if street == 'Some Street 42' and zip == '1337' and country == 'Funland': return 42.0, 13.37
+        if street == 'Other Street 24' and zip == '12345' and country == 'Otherland': return 23.0, 32.0
+        raise UnexpectedNumberOfLocationsForAddressError(0, street + ', ' + zip + ', ' + country)
+
+class RequesterHandlerTest(TestCase):
+
+    db = get_empty_local_test_db(['Requester'])
+    dao = RequestersDAO(db)
+    address_handler = AddressHandler(AddressLocatorStub())
+    requester_handler = RequesterHandler(dao, address_handler)
+
+    def setUp(self):
+        self.dao.clear()
+        self.requester_handler.active_user_sessions.clear()
+
+    def test_set_address_correctly(self):
+        session_id = 'someId'
+        requester = Requester('login', 'pw', 'first', 'last')
+        requester_id = self.dao.store_one(requester.to_db_object())
+        requester.id = requester_id
+        self.requester_handler.active_user_sessions[session_id] = requester
+        self.requester_handler.set_address('Some Street 42', '1337', 'Funland', session_id)
+        self.assertEqual(len(self.dao.get_all()), 1)
+        self.assertEqual(self.dao.get_all()[0]['address']['street'], 'Some Street 42')
+        self.assertEqual(self.dao.get_all()[0]['address']['zip'], '1337')
+        self.assertEqual(self.dao.get_all()[0]['address']['country'], 'Funland')
+        self.assertEqual(self.dao.get_all()[0]['address']['coordinates']['lat'], 42.0)
+        self.assertEqual(self.dao.get_all()[0]['address']['coordinates']['lng'], 13.37)
+
+    def test_update_address_correctly_if_already_set(self):
+        session_id = 'someId'
+        requester = Requester('login', 'pw', 'first', 'last')
+        requester_id = self.dao.store_one(requester.to_db_object())
+        requester.id = requester_id
+        self.requester_handler.active_user_sessions[session_id] = requester
+        self.requester_handler.set_address('Some Street 42', '1337', 'Funland', session_id)
+        self.requester_handler.set_address('Other Street 24', '12345', 'Otherland', session_id)
+        self.assertEqual(len(self.dao.get_all()), 1)
+        self.assertEqual(self.dao.get_all()[0]['address']['street'], 'Other Street 24')
+        self.assertEqual(self.dao.get_all()[0]['address']['zip'], '12345')
+        self.assertEqual(self.dao.get_all()[0]['address']['country'], 'Otherland')
+        self.assertEqual(self.dao.get_all()[0]['address']['coordinates']['lat'], 23.0)
+        self.assertEqual(self.dao.get_all()[0]['address']['coordinates']['lng'], 32.0)
+
+    def test_set_address_with_unknown_session_id(self):
+        session_id = 'someId'
+        self.assertNotIn(session_id, self.requester_handler.active_user_sessions)
+        with self.assertRaises(UserSessionIdNotFoundError):
+            self.requester_handler.set_address('Some Street 42', '1337', 'Funland', session_id)
+
+    def test_set_address_with_failing_geolocation(self):
+        session_id = 'someId'
+        requester = Requester('login', 'pw', 'first', 'last')
+        requester_id = self.dao.store_one(requester.to_db_object())
+        requester.id = requester_id
+        self.requester_handler.active_user_sessions[session_id] = requester
+        with self.assertRaises(UnexpectedNumberOfLocationsForAddressError):
+            self.requester_handler.set_address('Unknown Street 33', '12345', 'Nomansland', session_id)
+

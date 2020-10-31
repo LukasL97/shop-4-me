@@ -18,7 +18,7 @@ class RequestHandlerTest(TestCase):
     requests_dao = RequestsDAO(db)
     items_dao = ItemsDAO(db)
     item_handler = ItemHandler(items_dao, ShopOwnerHandler(None))
-    requester_handler = RequesterHandler(None)
+    requester_handler = RequesterHandler(None, None)
     volunteer_handler = VolunteerHandler(None)
     request_handler = RequestHandler(requests_dao, item_handler, requester_handler, volunteer_handler)
 
