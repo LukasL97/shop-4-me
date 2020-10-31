@@ -1,6 +1,7 @@
 import React, { Component, useState, useEffect } from 'react'
 import axios from 'axios'
-import Login from './Login'
+// import Login from './Login'
+import Login from './components/auth/Login'
 import { BrowserRouter as Router, Route, Link, Switch } from 'react-router-dom'
 import Navbar from './components/Navbar'
 import Cards from './components/Cards'
@@ -13,14 +14,15 @@ import { requests } from './dummy_data/requests'
 
 import CartCard from './components/CartCard'
 import PrivateRoute from './components/shared/PrivateRoute'
-import { parseCookies } from './utils/cookies'
+import { getAccessToken } from './utils/cookies'
 import CartCards from './components/CartCards'
 import { getRandomImage } from './utils/get-random-image'
 import Requests from './components/Requests'
 import { useFetch } from './services/useFetch'
 import AddItem from './components/AddItem'
+import Register from './components/auth/Register'
 
-const accessToken = parseCookies().access_token
+const accessToken = getAccessToken()
 
 const App = (props) => {
   const [data, setData] = useState([])
@@ -56,6 +58,7 @@ const App = (props) => {
     <Router>
       <Switch>
         <Route exact path='/login' component={Login} />
+        <Route exact path='/register' component={Register} />
         <Route exact path='/about' component={About} />
         <Route
           exact
