@@ -1,8 +1,10 @@
-import React from 'react'
+import React, { useState } from 'react'
 import PropTypes from 'prop-types'
 import FullCalendar from '@fullcalendar/react'
 import interactionPlugin from '@fullcalendar/interaction';
 import timeGridPlugin from '@fullcalendar/timegrid';
+import Cookies from 'universal-cookie'
+import axios from 'axios'
 
 const Calendar = (props) => {
   return <div className='calendar'>
@@ -31,27 +33,43 @@ const Calendar = (props) => {
   </div>
 }
 
-const AvailabilityCalendar = (props) => {
-  var now = new Date();
+const PopulateCalendar = (setCalendarData) => {
+	const cookies = new Cookies();
 
-  var calendarData = [
-    {start: "2020-10-25T14:30", end: "2020-10-25T16:00", nrequests: 0},
-    {start: "2020-10-25T17:00", end: "2020-10-25T20:00", nrequests: 5},
-    {start: "2020-10-27T17:30", end: "2020-10-27T19:30"},
-    {start: "2020-10-29T17:00", end: "2020-10-29T19:00"},
-  ].map((data) => ({
-    start: data.start,
-    end: data.end,
-    editable: new Date(data.start) >= now,
-    title: new Date(data.end) < now ? 
-        (data.nrequests == 0 ? 
-          "Skipped" :
-          "You helped " + data.nrequests + " household" + (data.nrequests == 1 ? "!" : "s!")) :
-      (new Date(data.start) < now ?
-        "Delivering" :
-        "Available"),
-    backgroundColor: new Date(data.end) < now ? "#474" : (new Date(data.start) < now ? "#7F7" : "#77F")
-  }))
+	const url = 'http://localhost:5000/timeframes'
+	axios({
+		method: "POST",
+		url: url, 
+		data: {
+			sessionId: cookies.get("access_token")
+		}
+	}).then((response) => {
+		var now = new Date();
+
+		const calendarData = response.data.map((timeframe) => ({
+			...timeframe,
+			nrequests: (timeframe.requests || []).length()
+		})).map((timeframe) => ({
+			start: timeframe.start,
+			end: timeframe.end,
+			editable: new Date(timeframe.start) >= now,
+			title: new Date(timeframe.end) < now ? 
+				(timeframe.nrequests == 0 ? 
+				"Skipped" :
+				"You helped " + timeframe.nrequests + " household" + (timeframe.nrequests == 1 ? "!" : "s!")) :
+			(new Date(timeframe.start) < now ?
+				"Delivering" :
+				"Available"),
+			backgroundColor: new Date(timeframe.end) < now ? "#474" : (new Date(timeframe.start) < now ? "#7F7" : "#77F")
+		}))
+		setCalendarData(calendarData)
+	})
+}
+
+const AvailabilityCalendar = (props) => {
+  var [calendarData, setCalendarData] = useState([])
+
+  PopulateCalendar(setCalendarData)
 
   var thanks = {weekly: 42, monthly: 123, yearly: 123}
   var thanksComponent;
