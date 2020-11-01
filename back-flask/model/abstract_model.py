@@ -37,4 +37,4 @@ class AbstractHandler(ABC):
         if db_object is not None:
             return self.from_db_object(db_object)
         else:
-            raise ObjectIdNotFoundError(id)
+            raise ObjectIdNotFoundError(id, self.model_cls.__name__)
