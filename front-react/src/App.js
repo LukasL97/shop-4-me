@@ -36,16 +36,10 @@ const images = [
   ready_made_food,
   soft_drinks,
 ]
-const data = items.map((item) => {
-  let randIndex = Math.floor(Math.random() * images.length)
-  let image = images[randIndex]
-  item.image = image
-  return item
-})
 
 class App extends Component {
   state = {
-    data: data,
+    data: [],
     cart: [],
     accessToken: accessToken,
   }
@@ -57,13 +51,18 @@ class App extends Component {
   }
 
   fetchData = async () => {
-    const url = 'http://localhost:5000/items/Catagory'
+    const url = 'http://localhost:5000/items/findByShopAndCategory'
     const response = await axios.get(url)
-    const data = response.data
+
+    const data = response.data.map((item) => {
+      let randIndex = Math.floor(Math.random() * images.length)
+      let image = images[randIndex]
+      item.image = image
+      return item
+    })
     this.setState({ data })
   }
   render() {
-    console.log(this.state.data)
     return (
       <Router>
         <Switch>
@@ -76,11 +75,7 @@ class App extends Component {
               <CardDetail {...props} data={this.state.data} />
             )}
           />
-          <PrivateRoute
-            path='/cart'
-            accessToken={this.state.accessToken}
-            component={Cart}
-          />
+          <PrivateRoute path='/cart' component={Cart} />
           <Route
             exact
             path='/'

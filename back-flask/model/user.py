@@ -9,7 +9,7 @@ from dao.users_dao import UsersDAO, RequestersDAO, VolunteersDAO, ShopOwnersDAO
 from model.abstract_model import AbstractModel, AbstractHandler
 from model.exception import UserNotFoundError, IncorrectPasswordError, UserAlreadyRegisteredError, \
     UserSessionIdNotFoundError, UnexpectedUserTypeError
-# from model.location.address import Address
+from model.location.address import Address, AddressHandler
 
 
 class UserHandlerResolver(object):
@@ -120,7 +120,7 @@ class UserHandler(AbstractHandler):
 class Requester(User):
 
     def __init__(self, login_name: str, password_hash: str, first_name: str, last_name: str, id: Optional[str] = None, address: Optional[Address] = None):
-        self.address: Optional[Address] = None
+        self.address: Optional[Address] = address
         super(Requester, self).__init__(login_name, password_hash, first_name, last_name, id)
 
     def to_db_object(self) -> Dict[str, Any]:
@@ -132,16 +132,27 @@ class Requester(User):
 class RequesterHandler(UserHandler):
 
     @inject
-    def __init__(self, dao: RequestersDAO):
+    def __init__(self, dao: RequestersDAO, address_handler: AddressHandler):
+        self.active_user_sessions: Dict[str, Requester] = {}
         self.dao = dao
+        self.address_handler: AddressHandler = address_handler
         self.model_cls: Type[Requester] = Requester
         super().__init__(self.model_cls, self.dao)
 
     def from_db_object(self, db_object: Dict[str, Any]) -> Requester:
         requester = cast(Requester, super(RequesterHandler, self).from_db_object(db_object))
         if 'address' in db_object and db_object['address'] is not None:
-            requester.address = Address.from_db_object(db_object['address'])
+            requester.address = self.address_handler.from_db_object(db_object['address'])
         return requester
+
+    def set_address(self, street: str, zip: str, country: str, session_id: str) -> str:
+        if session_id not in self.active_user_sessions:
+            raise UserSessionIdNotFoundError
+        requester = self.active_user_sessions[session_id]
+        address = self.address_handler(street, zip, country)
+        requester.address = address
+        self.dao.update_address(requester.id, address.to_db_object())
+        return 'Address successfully set'
 
 
 class Volunteer(User):

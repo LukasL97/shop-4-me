@@ -3,7 +3,8 @@ from flask import Response, make_response, jsonify
 
 from api.http_status import OK, BAD_REQUEST, UNAUTHORIZED, UNPROCESSABLE_ENTITY, NOT_FOUND
 from model.exception import UserSessionIdNotFoundError, ObjectIdNotFoundError, UnauthorizedAccessError, \
-    UnexpectedRequestStatusError, UnexpectedUserTypeError
+    UnexpectedRequestStatusError, UnexpectedUserTypeError, UnexpectedNumberOfLocationsForAddressError, \
+    MissingDeliveryAddressError
 from model.request import RequestHandler
 from spec import DocumentedBlueprint
 
@@ -75,7 +76,7 @@ def submit_request(request_handler: RequestHandler) -> Response:
     ---
     patch:
         summary: submit a created request as a requester
-        description: Only previously created requests can be submitted. A requester may only submit requests created by themself.
+        description: Only previously created requests can be submitted. A requester may only submit requests created by themself. If the deliveryAddress is not set, the request uses the requester's address.
         requestBody:
             required: true
             content:
@@ -89,6 +90,20 @@ def submit_request(request_handler: RequestHandler) -> Response:
                             sessionId:
                                 type: string
                                 description: session id of a logged in user of type Requester
+                            deliveryAddress:
+                                type: object
+                                required: false
+                                description: delivery address of this request; if not given the requester's address is used
+                                properties:
+                                    street:
+                                        type: string
+                                        description: street incl. house number in the format common in the according country (e.g. "Junailijankuja 5B")
+                                    zip:
+                                        type: string
+                                        description: zip code (e.g. "00520")
+                                    country:
+                                        type: string
+                                        description: country name in english (but national language should also work) (e.g. "Finland")
         responses:
             200:
                 description: submission successful
@@ -99,14 +114,15 @@ def submit_request(request_handler: RequestHandler) -> Response:
             404:
                 description: unknown request id
             422:
-                description: attempt to submit a request that did not have status 'CREATED'
+                description: attempt to submit a request that did not have status 'CREATED', or no delivery address given while requester has no address set themself, or the given delivery address could not be resolved to exactly one geolocation via the external geocoding API
     '''
     body = flask.globals.request.json
     try:
         return make_response(
             request_handler.submit_request(
                 request_id=body['request'],
-                session_id=body['sessionId']
+                session_id=body['sessionId'],
+                delivery_address=None if 'deliveryAddress' not in body else body['deliveryAddress']
             ),
             OK
         )
@@ -120,6 +136,10 @@ def submit_request(request_handler: RequestHandler) -> Response:
         return make_response('Tried submitting request that has been created by another requester', UNAUTHORIZED)
     except UnexpectedRequestStatusError as error:
         return make_response('Tried submitting request that did not have expected status %d, but status %d' % (error.expected, error.actual), UNPROCESSABLE_ENTITY)
+    except UnexpectedNumberOfLocationsForAddressError as error:
+        return make_response('Address "%s" resolved to %d geolocations' % (error.address, error.number_of_locations), UNPROCESSABLE_ENTITY)
+    except MissingDeliveryAddressError:
+        return make_response('No delivery address given and requester has no address set themself', UNPROCESSABLE_ENTITY)
 
 
 @request.route('/request/accept', methods=['PATCH'])
@@ -179,7 +199,7 @@ def get_open_requests(request_handler: RequestHandler) -> Response:
     ---
     get:
         summary: get a list of open requests as a Volunteer
-        description: Open requests are requests that have been created and submitted by a Requester, but not yet accepted by any Volunteer.
+        description: Open requests are requests that have been created and submitted by a Requester, but not yet accepted by any Volunteer. Optionally an area can be specified in order to limit the requests to only requests from that area.
         requestBody:
             required: true
             content:
@@ -190,9 +210,22 @@ def get_open_requests(request_handler: RequestHandler) -> Response:
                             sessionId:
                                 type: string
                                 description: session id of a logged in user of type Volunteer
+                            area:
+                                type: object
+                                description: optionally specifies an area around the querying volunteer to get requests only from inside this are
+                                properties:
+                                    range:
+                                        type: number
+                                        description: maximal distance in km from the volunteer's point
+                                    lat:
+                                        type: number
+                                        description: latitude of the volunteer
+                                    lng:
+                                        type: number
+                                        description: longitude of the volunteer
         responses:
             200:
-                description: list of all open requests with items directly inlined
+                description: list of all open requests (optionally from the given area) with items directly inlined, ordered from oldest to newest request according to submissionDate
                 content:
                     array:
                         schema:
@@ -206,7 +239,10 @@ def get_open_requests(request_handler: RequestHandler) -> Response:
     '''
     body = flask.globals.request.json
     try:
-        return make_response(jsonify(request_handler.get_open_requests(body['sessionId'])), OK)
+        return make_response(jsonify(request_handler.get_open_requests(
+            session_id=body['sessionId'],
+            area=None if 'area' not in body else body['area']
+        )), OK)
     except KeyError:
         return make_response('Request body did not contain required information', BAD_REQUEST)
     except UserSessionIdNotFoundError:
@@ -303,9 +339,38 @@ REQUEST_DOCSTRING = '''type: object
                                                         shop:
                                                             type: string
                                                             description: id of the shop
+                                                        details:
+                                                            type: object
+                                                            properties:
+                                                                description:
+                                                                    type: string
+                                                                attributes:
+                                                                    type: object
+                                                                    description: simple key-value mapping
                                                 amount:
                                                     type: number
                                                     description: amount of this item in the request
+                                    deliveryAddress:
+                                        type: object
+                                        description: only if request has been submitted 
+                                        properties:
+                                            street:
+                                                type: string
+                                            zip:
+                                                type: string
+                                            country:
+                                                type: string
+                                            coordinates:
+                                                type: object
+                                                properties:
+                                                    lat:
+                                                        type: number
+                                                        description: latitude
+                                                    lng:
+                                                        type: number
+                                                        description: longitude
+                                    submissionDate:
+                                        type: string
 '''
 
 get_open_requests.__doc__ = get_open_requests.__doc__.replace('<REQUEST>', REQUEST_DOCSTRING)

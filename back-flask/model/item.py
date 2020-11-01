@@ -8,16 +8,18 @@ from injector import inject
 from dao.items_dao import ItemsDAO
 from model.abstract_model import AbstractModel, AbstractHandler
 from model.exception import UserSessionIdNotFoundError
+from model.product_details import ProductDetails
 from model.user import ShopOwnerHandler
 
 
 class Item(AbstractModel):
 
-    def __init__(self, name: str, price: float, category: str, shop: str, id: Optional[str] = None):
+    def __init__(self, name: str, price: float, category: str, shop: str, details: Optional[ProductDetails], id: Optional[str] = None):
         self.name: str = name
         self.price: float = price
         self.category: str = category
         self.shop: str = shop
+        self.details: ProductDetails = details
         super(Item, self).__init__(id)
 
     def to_db_object(self) -> Dict[str, Any]:
@@ -25,7 +27,8 @@ class Item(AbstractModel):
             'name': self.name,
             'price': self.price,
             'category': self.category,
-            'shop': ObjectId(self.shop)
+            'shop': ObjectId(self.shop),
+            'details': self.details.to_db_object()
         }
 
     def to_response(self) -> Dict[str, Any]:
@@ -34,7 +37,8 @@ class Item(AbstractModel):
             'name': self.name,
             'price': self.price,
             'category': self.category,
-            'shop': self.shop
+            'shop': self.shop,
+            'details': self.details.to_response()
         }
 
 
@@ -52,6 +56,7 @@ class ItemHandler(AbstractHandler):
             price=db_object['price'],
             category=db_object['category'],
             shop=str(db_object['shop']),
+            details=ProductDetails.from_db_object(db_object['details']),
             id=str(db_object['_id'])
         )
 
@@ -69,12 +74,13 @@ class ItemHandler(AbstractHandler):
         #     # TODO: ensure that shop is owned by correct ShopOwner
         #     raise UnauthorizedAccessError
 
-    def add_item(self, name: str, price: float, category: str, shop: str, session_id: str) -> str:
+    def add_item(self, name: str, price: float, category: str, shop: str, description: str, attributes: Dict[str, Any], session_id: str) -> str:
         item = Item(
             name=name,
             price=price,
             category=category,
-            shop=shop
+            shop=shop,
+            details=ProductDetails(description, attributes)
         )
         self.validate(item, session_id)
         id = self.dao.store_one(item.to_db_object())
