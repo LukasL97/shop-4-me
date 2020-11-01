@@ -5,14 +5,22 @@ import Cards from './Cards'
 import Cookies from 'universal-cookie'
 import AvailabilityCalendar from './Calendar'
 
-const Home = (props) => {
+const Home = ({ data, addItemToCart, removeItemFromCart }) => {
   const cookies = new Cookies();
   let userType = cookies.get('user_type');
   let component = userType === "Requester" ?
-	<Cards data={props.data} addItemToCart={props.addItemToCart} /> :
-	userType === "Volunteer" ?
+	<Cards
+		data={data}
+		addItemToCart={addItemToCart}
+		removeItemFromCart={removeItemFromCart}
+	/>
+	: userType === "Volunteer" ?
     <AvailabilityCalendar /> :
-	<Cards data={props.data} addItemToCart={props.addItemToCart} />
+	<Cards
+	  data={data}
+	  addItemToCart={addItemToCart}
+	  removeItemFromCart={removeItemFromCart}
+	/>
   
   return (
     <Layout>

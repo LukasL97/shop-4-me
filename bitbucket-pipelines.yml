@@ -3,20 +3,34 @@
 # Only use spaces to indent your .yml configuration.
 # -----
 # You can specify a custom docker image from Docker Hub as your build environment.
-image: node:10.15.3
+
 
 pipelines:
   default:
-    - step:
-        caches:
-          - node
-        script: # Modify the commands below to build your repository.
-          - npm install
-          - npm test
-          - pipe: atlassian/heroku-deploy:1.2.1
-            variables:
-              HEROKU_API_KEY: '<string>'
-              HEROKU_APP_NAME: '<string>'
-              ZIP_FILE: '<string>'
-              # WAIT: '<boolean>' # Optional.
-              # DEBUG: '<boolean>' # Optional
+    - parallel:
+        - step: # Python backend
+            name: Test backend
+            image: python:3.7.2
+            script:
+              - cd back-flask
+              - pip install -r requirements.txt
+              #- python -m unittest discover test #realtive import path issues...
+              #- pipe: atlassian/heroku-deploy:1.2.1
+              #  variables:
+              #    HEROKU_API_KEY: '<string>'
+              #    HEROKU_APP_NAME: '<string>'
+              #    ZIP_FILE: '<string>'
+        - step: # React frontend
+            name: Test frontend
+            image: node:10.15.3
+            caches:
+              - node
+            script:
+              - cd front-react
+              - npm install
+              - npm test
+              #- pipe: atlassian/heroku-deploy:1.2.1
+              #  variables:
+              #    HEROKU_API_KEY: '<string>'
+              #    HEROKU_APP_NAME: '<string>'
+              #    ZIP_FILE: '<string>'

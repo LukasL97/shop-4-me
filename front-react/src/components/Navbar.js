@@ -8,10 +8,13 @@ import { parseCookies, deleteCookie } from '../utils/cookies'
 
 const Navbar = (props) => {
   const [auth, setAuth] = useState('')
+  const [cart, setCart] = useState([])
 
   useEffect(() => {
     const accessToken = parseCookies().access_token
     setAuth(accessToken)
+    let parsedCart = JSON.parse(localStorage.getItem('cart'))
+    setCart(parsedCart)
   }, [auth])
 
   const handleLogout = async () => {
@@ -46,16 +49,19 @@ const Navbar = (props) => {
             Eligible
           </NavLink>
         </li>
-        <li>
-          <NavLink exact activeClassName='active' to='/shop-now'>
-            Shop Now
-          </NavLink>
-        </li>
         {auth && (
           <li>
-            <NavLink exact activeClassName='active' to='/cart'>
+            <NavLink exact activeClassName='active' to='/requests'>
+              Requests
+            </NavLink>
+          </li>
+        )}
+
+        {auth && (
+          <li>
+            <NavLink exact activeClassName='active' to='/carts'>
               <i className='fas fa-shopping-cart'></i>
-              {props.cart && <sup>123</sup>}
+              {cart && cart.length > 0 && <sup>{cart.length}</sup>}
             </NavLink>
           </li>
         )}

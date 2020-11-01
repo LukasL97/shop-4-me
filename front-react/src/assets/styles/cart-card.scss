@@ -1,0 +1,29 @@
+.cart-card {
+  border-radius: 4px;
+  padding: 0.5rem;
+  box-shadow: 0 14px 28px rgba(0, 0, 0, 0.1), 0 10px 10px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+  transition: background-color 0.9s ease;
+  margin: 25px auto;
+  .icons {
+    display: flex;
+    justify-content: space-between;
+    width: 100px;
+    margin: 20px 0 5px 0;
+  }
+  .cart-card-image img {
+    max-width: 300px;
+  }
+  .card-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+}
+.cart-card:hover {
+  &:icons {
+    visibility: visible;
+  }
+  background: rgb(252, 251, 255);
+  box-shadow: 0 14px 28px rgba(0, 0, 0, 0.25), 0 10px 10px rgba(0, 0, 0, 0.22);
+}
