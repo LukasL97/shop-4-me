@@ -339,6 +339,14 @@ REQUEST_DOCSTRING = '''type: object
                                                         shop:
                                                             type: string
                                                             description: id of the shop
+                                                        details:
+                                                            type: object
+                                                            properties:
+                                                                description:
+                                                                    type: string
+                                                                attributes:
+                                                                    type: object
+                                                                    description: simple key-value mapping
                                                 amount:
                                                     type: number
                                                     description: amount of this item in the request

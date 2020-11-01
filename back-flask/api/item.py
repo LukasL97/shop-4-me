@@ -46,6 +46,14 @@ def find_by_shop_and_category(item_handler: ItemHandler) -> Response:
                                     shop:
                                         type: string
                                         description: id of the shop
+                                    details:
+                                        type: object
+                                        properties:
+                                            description:
+                                                type: string
+                                            attributes:
+                                                type: object
+                                                description: simple key-value mapping
     '''
     shop_id = request.args.get('shopId', default=None, type=str)
     category = request.args.get('category', default=None, type=str)
@@ -77,6 +85,14 @@ def add_item(item_handler: ItemHandler) -> Response:
                                     shop:
                                         type: string
                                         description: id of the shop
+                                    details:
+                                        type: object
+                                        properties:
+                                            description:
+                                                type: string
+                                            attributes:
+                                                type: object
+                                                description: simple key-value mapping
                             sessionId:
                                 type: string
                                 description: session id of a logged in user of type ShopOwner
@@ -103,6 +119,8 @@ def add_item(item_handler: ItemHandler) -> Response:
                 price=body['item']['price'],
                 category=body['item']['category'],
                 shop=body['item']['shop'],
+                description=body['item']['details']['description'],
+                attributes=body['item']['details']['attributes'],
                 session_id=body['sessionId']
             ),
             OK
