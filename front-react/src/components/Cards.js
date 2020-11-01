@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import PropTypes from 'prop-types'
 import Card from './Card'
 import { items } from '../dummy_data/items'
@@ -25,8 +25,17 @@ const images = [
 ]
 
 const Cards = (props) => {
-  const cardItems = props.data.map((item) => (
-    <Card key={item.id} item={item} image={item.image} id={item.id} />
+  const { addItemToCart, removeItemFromCart } = props
+  const cardItems = props.data.map((item, index) => (
+    <Card
+      key={item.id}
+      item={item}
+      image={item.image}
+      id={item.id}
+      index={index}
+      addItemToCart={addItemToCart}
+      removeItemFromCart={removeItemFromCart}
+    />
   ))
   return <div className='cards'>{cardItems}</div>
 }

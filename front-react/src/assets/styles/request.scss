@@ -1,0 +1,54 @@
+.request-card {
+  margin: 15px 0;
+
+  details {
+    padding: 25px;
+    box-shadow: 0 2px 3px 2px rgba(0, 0, 0, 0.25),
+      0 10px 10px rgba(0, 0, 0, 0.1);
+    cursor: pointer;
+  }
+
+  summary {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+  }
+  summary::-webkit-details-marker {
+    display: none;
+  }
+  summary:before {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: rgb(153, 152, 165);
+    border-radius: 5px;
+    width: 30px;
+    content: '+';
+    color: #fff;
+    font-weight: bold;
+    margin-right: 10px;
+    height: 30px;
+    font-size: 1.75rem;
+  }
+  details[open] summary:before {
+    content: '-';
+  }
+  details:hover {
+    box-shadow: 0 14px 28px rgba(0, 0, 0, 0.25), 0 10px 10px rgba(0, 0, 0, 0.22);
+  }
+  details:focus {
+    border: none;
+  }
+  summary:focus {
+    outline: none;
+  }
+  .request-summary {
+    display: flex;
+    justify-content: space-between;
+  }
+  .date,
+  .total-price {
+    color: rgb(99, 97, 97);
+    font-weight: 300;
+  }
+}

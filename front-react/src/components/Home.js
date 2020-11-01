@@ -3,10 +3,14 @@ import PropTypes from 'prop-types'
 import Layout from './Layout'
 import Cards from './Cards'
 
-const Home = (props) => {
+const Home = ({ data, addItemToCart, removeItemFromCart }) => {
   return (
     <Layout>
-      <Cards data={props.data} addItemToCart={props.addItemToCart} />
+      <Cards
+        data={data}
+        addItemToCart={addItemToCart}
+        removeItemFromCart={removeItemFromCart}
+      />
     </Layout>
   )
 }
