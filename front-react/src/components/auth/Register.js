@@ -165,11 +165,13 @@ const Register = (props) => {
         address,
         zip,
       } = formData
+
       data = {
         userType,
         firstName,
         lastName,
         email,
+        loginName: email,
         password,
         agreed,
         address,
@@ -181,6 +183,7 @@ const Register = (props) => {
         userType,
         lastName,
         email,
+        loginName: email,
         password,
         agreed,
       } = formData
