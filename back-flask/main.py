@@ -7,15 +7,18 @@ from injector import singleton, Binder
 
 from api.item import item
 from api.request import request
+from api.time_frame import time_frame
 from api.user import user
 from dao.items_dao import ItemsDAO
 from dao.requests_dao import RequestsDAO
+from dao.time_frames_dao import TimeFramesDAO
 from dao.users_dao import RequestersDAO, VolunteersDAO, ShopOwnersDAO
 from db import db
 from model.item import ItemHandler
 from model.location.address import AddressHandler
 from model.location.geocoding import AddressLocator
 from model.request import RequestHandler
+from model.time_frame import TimeFrameHandler
 from model.user import RequesterHandler, VolunteerHandler, ShopOwnerHandler, UserHandlerResolver
 from spec import get_spec_as_html
 
@@ -28,6 +31,7 @@ def configure_model_handlers(binder: Binder) -> None:
     binder.bind(RequestHandler, to=RequestHandler, scope=singleton)
     binder.bind(AddressLocator, to=AddressLocator, scope=singleton)
     binder.bind(AddressHandler, to=AddressHandler, scope=singleton)
+    binder.bind(TimeFrameHandler, to=TimeFrameHandler, scope=singleton)
 
 def configure_daos(binder: Binder) -> None:
     binder.bind(RequestersDAO, to=RequestersDAO(db), scope=singleton)
@@ -35,6 +39,7 @@ def configure_daos(binder: Binder) -> None:
     binder.bind(ShopOwnersDAO, to=ShopOwnersDAO(db), scope=singleton)
     binder.bind(ItemsDAO, to=ItemsDAO(db), scope=singleton)
     binder.bind(RequestsDAO, to=RequestsDAO(db), scope=singleton)
+    binder.bind(TimeFramesDAO, to=TimeFramesDAO(db), scope=singleton)
 
 app = Flask(__name__)
 CORS(app)
@@ -43,6 +48,7 @@ app.config['CORS_ORIGINS'] = 'http://localhost:3000'
 app.register_blueprint(user)
 app.register_blueprint(item)
 app.register_blueprint(request)
+app.register_blueprint(time_frame)
 
 FlaskInjector(app=app, modules=[configure_model_handlers, configure_daos])
 
