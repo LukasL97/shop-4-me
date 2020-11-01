@@ -18,7 +18,7 @@ const options = [
   },
   {
     label: 'Shop Owner',
-    value: 'Shop Owner',
+    value: 'ShopOwner',
   },
 ]
 
@@ -185,11 +185,10 @@ const Register = (props) => {
         userType,
         lastName,
         email,
-        loginName: loginIn,
         password,
         agreed,
       } = formData
-      data = { firstName, lastName, email, password, agreed, userType }
+      data = { firstName, lastName, email, loginName: loginName, password, agreed, userType }
     }
 
     try {
