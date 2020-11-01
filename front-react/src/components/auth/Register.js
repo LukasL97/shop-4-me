@@ -155,10 +155,23 @@ const Register = (props) => {
 
     let data
     if (formData.userType === 'Requester') {
-      data = formData
+      const { firstName,
+        userType,
+        lastName,
+        email,
+        password,
+        agreed,address, zip} = formData
+      data = {userType, lastName, email, password, agreed, address, zip }
     } else {
-      const { firstName, lastName, email, password, agreed } = formData
-      data = { firstName, lastName, email, password, agreed }
+      const {
+        firstName,
+        userType,
+        lastName,
+        email,
+        password,
+        agreed,
+      } = formData
+      data = { firstName, lastName, email, password, agreed, userType }
     }
 
     try {

@@ -56,7 +56,7 @@ const Login = (props) => {
       console.log(error)
     }
   }
-  console.log(formData)
+
   return (
     <Layout>
       <div className='login'>
