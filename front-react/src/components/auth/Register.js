@@ -18,7 +18,7 @@ const options = [
   },
   {
     label: 'Shop Owner',
-    value: 'Shop Owner',
+    value: 'ShopOwner',
   },
 ]
 
