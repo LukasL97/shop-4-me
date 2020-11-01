@@ -62,11 +62,11 @@ def add_time_frame(time_frame_handler: TimeFrameHandler) -> Response:
         return make_response(error.args[0], BAD_REQUEST)
 
 
-@time_frame.route('/timeframes', methods=['GET'])
+@time_frame.route('/timeframes', methods=['POST'])
 def get_time_frames(time_frame_handler: TimeFrameHandler) -> Response:
     '''
     ---
-    get:
+    post:
         summary: get all own timeframes as a volunteer
         requestBody:
             required: true
