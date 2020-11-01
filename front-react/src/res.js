@@ -101,3 +101,132 @@ const Card = ({
 Card.propTypes = {}
 
 export default Card
+import React from 'react'
+import { NavLink } from 'react-router-dom'
+import SelectListGroup from '../shared/SelectListGroup'
+import TextInputField from '../shared/TextInputField'
+import PropTypes from 'prop-types'
+import Layout from '../Layout'
+import '../../assets/styles/form.scss'
+
+const options = [
+  {
+    label: 'Select',
+    value: '----',
+  },
+  {
+    label: 'Requester',
+    value: 'Requester',
+  },
+  {
+    label: 'Volunteer',
+    value: 'Volunteer',
+  },
+  {
+    label: 'Shop Owner',
+    value: 'Shop Owner',
+  },
+]
+
+const Register = (props) => {
+  return (
+    <Layout>
+      <form>
+        <h1>Create your shop4me account by registering</h1>
+        <SelectListGroup options={options} />
+        <div className='form-group'>
+          <TextInputField
+            name='firstname'
+            label='First name'
+            type='text'
+            placeholder='Firsty'
+            required
+          />
+        </div>
+        <TextInputField
+          name='lastname'
+          label='Last name'
+          type='text'
+          placeholder='Lastnamersson'
+          required
+        />
+        <TextInputField
+          name='email'
+          label='Email'
+          type='email'
+          placeholder='e.g. email@provider.com'
+          iconl='fa-envelope'
+          inputCheck={(email) => {
+            return email
+              ? {
+                  ok_message: 'This username is available',
+                  iconr: 'fa-check',
+                }
+              : {
+                  ok_message: null,
+                  iconr: null,
+                }
+          }}
+          required
+        />
+        <TextInputField
+          name='password'
+          label='Password'
+          type='password'
+          placeholder='e.g. something614SortaSecure'
+          iconl='fa-user'
+          inputCheck={(password) => {
+            return password.length < 7
+              ? {
+                  ok_message: null,
+                  error_message: 'Password is too short!',
+                  iconr: null,
+                }
+              : {
+                  ok_message: ' ',
+                  error_message: null,
+                  iconr: 'fa-check',
+                }
+          }}
+          required
+        />
+        <TextInputField
+          name='address'
+          label='Street address'
+          type='text'
+          placeholder='e.g. Kyläsaarenkuja 5 B'
+          required
+        />
+        <TextInputField
+          name='zip'
+          label='ZIP Code'
+          type='number'
+          placeholder='e.g. 00220'
+          required
+        />
+        <div className='field'>
+          <div className='control'>
+            <label className='checkbox'>
+              <input type='checkbox' /> I agree to the{' '}
+              <a href='#'>terms and conditions</a>
+            </label>
+          </div>
+        </div>
+        <div className='field'>
+          <div className='control'>
+            <button className='button is-link' type='submit'>
+              Register
+            </button>{' '}
+            <NavLink className='button is-link' to='/login'>
+              Login
+            </NavLink>
+          </div>
+        </div>
+      </form>
+    </Layout>
+  )
+}
+
+Register.propTypes = {}
+
+export default Register

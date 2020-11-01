@@ -2,7 +2,7 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import classnames from 'classnames'
 
-import {errorStyles} from './errorStyles'
+import { errorStyles } from './errorStyles'
 
 const SelectListGroup = ({
   label,
@@ -20,18 +20,20 @@ const SelectListGroup = ({
     </option>
   ))
   return (
-    <div className='form-group'>
+    <div className=' field'>
       <label htmlFor={htmlFor}>{label}</label>
-      <select
-        className={classnames('form-control form-control-lg', {
-          'is-invalid': error,
-        })}
-        name={name}
-        value={value}
-        onChange={onChange}
-      >
-        {selectOptions}
-      </select>
+      <span className='select'>
+        <select
+          className={classnames('form-control form-control-lg', {
+            'is-invalid': error,
+          })}
+          name={name}
+          value={value}
+          onChange={onChange}
+        >
+          {selectOptions}
+        </select>
+      </span>
       {info && <small className='form-text text-muted'>{info}</small>}
       {error && (
         <small className='invalid-feedback' style={errorStyles}>

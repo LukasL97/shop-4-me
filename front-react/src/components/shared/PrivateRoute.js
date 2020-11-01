@@ -1,11 +1,10 @@
 import React, { useState, useEffect } from 'react'
 import { Route, Redirect } from 'react-router-dom'
 import PropTypes from 'prop-types'
-import { parseCookies, deleteCookie } from '../../utils/cookies'
-console.log(parseCookies().access_token)
+import { getAccessToken, deleteCookie } from '../../utils/cookies'
 
 const PrivateRoute = ({ component: Component, ...rest }) => {
-  const accessToken = parseCookies().access_token
+  const accessToken = getAccessToken()
   return (
     <Route
       {...rest}

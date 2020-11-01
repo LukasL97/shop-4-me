@@ -13,31 +13,31 @@ const TextInputField = ({
   onBlur,
   error,
   checked,
-  className
+  className,
 }) => {
   const invalidInput = error ? 'invalid-input' : ''
   if (type === 'radio') {
     return (
-      <div className={className ? className : 'form-group'}>
-        <input
-          type={type}
-          name={name}
-          id={id}
-          value={value}
-          onChange={onChange}
-          onBlur={onBlur}
-          checked={checked}
-        />
+      <div className={'field'}>
+        <div className='control'>
+          <input
+            type={type}
+            name={name}
+            id={id}
+            value={value}
+            onChange={onChange}
+            onBlur={onBlur}
+            checked={checked}
+            className='input'
+          />
+        </div>
         {label && (
-          <label htmlFor={id} className='input-label'>
+          <label htmlFor={id} className='input-label label'>
             {label}
           </label>
         )}
         {error && (
-          <small
-            style={errorStyles}
-            className='error invalid-feedback'
-          >
+          <small style={errorStyles} className='error invalid-feedback'>
             {error}
           </small>
         )}
@@ -49,7 +49,7 @@ const TextInputField = ({
       border: '5px solid green',
       color: 'red',
       alignItems: 'center',
-      border: '5px solid red'
+      border: '5px solid red',
     }
     return (
       <div className={'form-checkbox-group'}>
@@ -70,18 +70,24 @@ const TextInputField = ({
   }
 
   return (
-    <div className={className ? className : 'form-group'}>
-      {label && <label htmlFor={name}>{label}</label>}
-      <input
-        type={type}
-        name={name}
-        id={name}
-        placeholder={placeholder}
-        value={value}
-        onChange={onChange}
-        onBlur={onBlur}
-        className={invalidInput}
-      />
+    <div className={className ? className : 'form-group field'}>
+      {label && (
+        <label htmlFor={name} className='label'>
+          {label}
+        </label>
+      )}
+      <div className='control'>
+        <input
+          type={type}
+          name={name}
+          id={name}
+          placeholder={placeholder}
+          value={value}
+          onChange={onChange}
+          onBlur={onBlur}
+          className={invalidInput + ' input'}
+        />
+      </div>
 
       {error && (
         <small className='error' style={errorStyles}>
@@ -93,12 +99,12 @@ const TextInputField = ({
 }
 TextInputField.defaultProps = {
   type: 'text',
-  placeholder: ''
+  placeholder: '',
 }
 TextInputField.propTypes = {
   type: PropTypes.string,
   name: PropTypes.string.isRequired,
-  onChange: PropTypes.func.isRequired
+  onChange: PropTypes.func.isRequired,
 }
 
 export default TextInputField

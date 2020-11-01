@@ -4,14 +4,14 @@ import { Link, NavLink, Redirect } from 'react-router-dom'
 import PropTypes from 'prop-types'
 import '../assets/styles/navbar.scss'
 import Button from './Button'
-import { parseCookies, deleteCookie } from '../utils/cookies'
+import { getAccessToken, deleteCookie } from '../utils/cookies'
 
 const Navbar = (props) => {
   const [auth, setAuth] = useState('')
   const [cart, setCart] = useState([])
 
   useEffect(() => {
-    const accessToken = parseCookies().access_token
+    const accessToken = getAccessToken()
     setAuth(accessToken)
     let parsedCart = JSON.parse(localStorage.getItem('cart'))
     setCart(parsedCart)
@@ -74,8 +74,8 @@ const Navbar = (props) => {
         )}
         {!auth && (
           <li>
-            <NavLink exact activeClassName='active' to='/login'>
-              Login
+            <NavLink exact activeClassName='active' to='/register'>
+              Register
             </NavLink>
           </li>
         )}

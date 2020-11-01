@@ -191,6 +191,7 @@ class InputField extends React.Component {
   }
 }
 
+
 function RegisterSharedUpper() {
   return (
     <div>
