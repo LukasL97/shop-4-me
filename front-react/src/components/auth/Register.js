@@ -137,9 +137,9 @@ const Register = (props) => {
 
     return errors
   }
+
   const onSubmit = async (e) => {
     e.preventDefault()
-    console.log(formData)
     const callback = (res) => {
       console.log(res)
       const cookies = new Cookies()
@@ -154,10 +154,12 @@ const Register = (props) => {
     }
 
     let data
+    const loginName = formData.email
+
     if (formData.userType === 'Requester') {
       const {
-        firstName,
         userType,
+        firstName,
         lastName,
         email,
         password,
@@ -171,7 +173,7 @@ const Register = (props) => {
         firstName,
         lastName,
         email,
-        loginName: email,
+        loginName: loginName,
         password,
         agreed,
         address,
@@ -183,7 +185,7 @@ const Register = (props) => {
         userType,
         lastName,
         email,
-        loginName: email,
+        loginName: loginIn,
         password,
         agreed,
       } = formData
