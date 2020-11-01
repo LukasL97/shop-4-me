@@ -36,6 +36,7 @@ const Register = (props) => {
       lastName: false,
       address: false,
       zip: false,
+      agreed: false,
     },
   }
 
@@ -46,7 +47,7 @@ const Register = (props) => {
   }
   const onBlur = (e) => {
     const { name } = e.target
-    setFormData({ ...FormData, touched: { ...formData.touched, [name]: true } })
+    setFormData({ ...formData, touched: { ...formData.touched, [name]: true } })
   }
   const validate = () => {
     const errors = {
@@ -56,9 +57,85 @@ const Register = (props) => {
       zip: '',
     }
 
-    if (validator.isEmpty(formData.firstName) && formData.touched.firstName) {
-      errors.firstName = 'First name is required'
+    // first
+    if (
+      formData.touched.firstName &&
+      !validator.isLength(formData.firstName, {
+        min: 2,
+        max: 12,
+      })
+    ) {
+      errors.firstName = 'First name should be between 2 and 12 characters'
     }
+
+    if (formData.touched.firstName && validator.isEmpty(formData.firstName)) {
+      errors.firstName = 'Last name is required'
+    }
+
+    // last name
+    if (
+      formData.touched.lastName &&
+      !validator.isLength(formData.lastName, {
+        min: 2,
+        max: 12,
+      })
+    ) {
+      errors.lastName = 'Last name should be between 2 and 12 characters'
+    }
+
+    if (formData.touched.lastName && validator.isEmpty(formData.lastName)) {
+      errors.lastName = 'Last name is required'
+    }
+
+    // Email
+
+    if (formData.touched.email && !validator.isEmail(formData.email)) {
+      errors.email = 'It must be a valid email'
+    }
+    if (formData.touched.email && validator.isEmpty(formData.email)) {
+      errors.email = 'Email is required'
+    }
+
+    if (formData.touched.password && validator.isEmpty(formData.password)) {
+      errors.password = 'Password is required'
+    }
+
+    if (
+      formData.touched.password &&
+      !validator.isLength(formData.password, { min: 6, max: 30 })
+    ) {
+      errors.password = 'Password must be between 6 to 30 characters'
+    }
+    if (formData.touched.password && validator.isEmpty(formData.password)) {
+      errors.password = 'Password is required'
+    }
+    if (
+      formData.touched.address &&
+      !validator.isLength(formData.address, {
+        min: 2,
+        max: 30,
+      })
+    ) {
+      errors.address = 'Address should be between 3 to 30 characters'
+    }
+    if (formData.touched.address && validator.isEmpty(formData.address)) {
+      errors.address = 'Address is required'
+    }
+    if (
+      formData.touched.zip &&
+      !validator.isLength(formData.zip, {
+        min: 2,
+        max: 10,
+      })
+    ) {
+      errors.zip = 'Zip should be between 3 to 10 characters'
+    }
+
+    if (formData.touched.zip && validator.isEmpty(formData.zip)) {
+      errors.zip = 'Zip is required'
+    }
+
+    return errors
   }
   const onSubmit = async (e) => {
     e.preventDefault()
@@ -90,6 +167,11 @@ const Register = (props) => {
     } catch (error) {
       console.log(error)
     }
+
+    if (formData.agreed) {
+    } else {
+      // setFormData({...formData})
+    }
   }
 
   const errors = validate()
@@ -117,8 +199,8 @@ const Register = (props) => {
                 onChange={onChange}
                 type='text'
                 placeholder='First Name'
-                // onBlur={onBlur}
-                // error={errors.firstName}
+                onBlur={onBlur}
+                error={errors.firstName}
               />
             </div>
             <div className='column is-one-quarter'>
@@ -129,6 +211,8 @@ const Register = (props) => {
                 onChange={onChange}
                 type='text'
                 placeholder='Last Name'
+                onBlur={onBlur}
+                error={errors.lastName}
               />
             </div>
           </div>
@@ -144,18 +228,8 @@ const Register = (props) => {
                 type='email'
                 placeholder='e.g. email@provider.com'
                 iconl='fa-envelope'
-                inputCheck={(email) => {
-                  return email
-                    ? {
-                        ok_message: 'This username is available',
-                        iconr: 'fa-check',
-                      }
-                    : {
-                        ok_message: null,
-                        iconr: null,
-                      }
-                }}
-                required
+                onBlur={onBlur}
+                error={errors.email}
               />
             </div>
             <div className='column is-one-quarter'>
@@ -167,20 +241,8 @@ const Register = (props) => {
                 onChange={onChange}
                 placeholder='e.g. something614SortaSecure'
                 iconl='fa-user'
-                inputCheck={(password) => {
-                  return password.length < 7
-                    ? {
-                        ok_message: null,
-                        error_message: 'Password is too short!',
-                        iconr: null,
-                      }
-                    : {
-                        ok_message: ' ',
-                        error_message: null,
-                        iconr: 'fa-check',
-                      }
-                }}
-                required
+                onBlur={onBlur}
+                error={errors.password}
               />
             </div>
           </div>
@@ -196,7 +258,8 @@ const Register = (props) => {
                   onChange={onChange}
                   type='text'
                   placeholder='e.g. Kyläsaarenkuja 5 B'
-                  required
+                  onBlur={onBlur}
+                  error={errors.address}
                 />
               </div>
               <div className='column is-one-quarter'>
@@ -207,7 +270,8 @@ const Register = (props) => {
                   onChange={onChange}
                   type='number'
                   placeholder='e.g. 00220'
-                  required
+                  onBlur={onBlur}
+                  error={errors.zip}
                 />
               </div>
             </div>
@@ -225,6 +289,8 @@ const Register = (props) => {
                     type='checkbox'
                     onChange={onChange}
                     name='agreed'
+                    onBlur={onBlur}
+                    error={errors.agreed}
                   />{' '}
                   I agree to the <a href='#'>terms and conditions</a>
                 </label>
