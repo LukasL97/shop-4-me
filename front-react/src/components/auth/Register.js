@@ -7,6 +7,7 @@ import Layout from '../Layout'
 import axios from 'axios'
 import Cookies from 'universal-cookie'
 import validator from 'validator'
+
 const options = [
   {
     label: 'Requester',
@@ -173,23 +174,32 @@ const Register = (props) => {
         firstName,
         lastName,
         email,
-        loginName: loginName,
+        loginName,
         password,
         agreed,
         address,
         zip,
       }
+    } else if (formData.value === 'Shop Owner') {
+      data.userType = 'ShopOwner'
     } else {
       const {
         firstName,
         userType,
         lastName,
         email,
-        loginName: loginIn,
         password,
         agreed,
       } = formData
-      data = { firstName, lastName, email, password, agreed, userType }
+      data = {
+        firstName,
+        lastName,
+        email,
+        loginName,
+        password,
+        agreed,
+        userType,
+      }
     }
 
     try {
