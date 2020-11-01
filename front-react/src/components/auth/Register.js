@@ -6,6 +6,7 @@ import PropTypes from 'prop-types'
 import Layout from '../Layout'
 import axios from 'axios'
 import Cookies from 'universal-cookie'
+import validator from 'validator'
 const options = [
   {
     label: 'Requester',
@@ -24,18 +25,40 @@ const options = [
 const Register = (props) => {
   const initialData = {
     userType: 'Requester',
-    loginName: '',
-    password: '',
     firstName: '',
     lastName: '',
-    agreed: false,
+    password: '',
+    address: '',
     zip: '',
+    agreed: false,
+    touched: {
+      firstName: false,
+      lastName: false,
+      address: false,
+      zip: false,
+    },
   }
 
   const [formData, setFormData] = useState(initialData)
   const onChange = (e) => {
     const { name, value, checked } = e.target
     setFormData({ ...formData, [name]: value, agree: checked })
+  }
+  const onBlur = (e) => {
+    const { name } = e.target
+    setFormData({ ...FormData, touched: { ...formData.touched, [name]: true } })
+  }
+  const validate = () => {
+    const errors = {
+      firstName: '',
+      lastName: '',
+      address: '',
+      zip: '',
+    }
+
+    if (validator.isEmpty(formData.firstName) && formData.touched.firstName) {
+      errors.firstName = 'First name is required'
+    }
   }
   const onSubmit = async (e) => {
     e.preventDefault()
@@ -52,17 +75,25 @@ const Register = (props) => {
         expires: new Date(new Date().getTime() + 60 * 60 * 1000),
       })
     }
+
+    let data
+    if (formData.userType === 'Requester') {
+      data = formData
+    } else {
+      const { firstName, lastName, email, password, agreed } = formData
+      data = { firstName, lastName, email, password, agreed }
+    }
+
     try {
-      await axios
-        .post('http://localhost:5000/register', formData)
-        .then(callback)
+      await axios.post('http://localhost:5000/register', data).then(callback)
       props.history.push('/login')
     } catch (error) {
       console.log(error)
     }
   }
 
-  console.log(formData)
+  const errors = validate()
+
   return (
     <Layout>
       <form onSubmit={onSubmit}>
@@ -86,6 +117,8 @@ const Register = (props) => {
                 onChange={onChange}
                 type='text'
                 placeholder='First Name'
+                // onBlur={onBlur}
+                // error={errors.firstName}
               />
             </div>
             <div className='column is-one-quarter'>
@@ -152,32 +185,37 @@ const Register = (props) => {
             </div>
           </div>
         </div>
-        <div className='row'>
-          <div className='columns'>
-            <div className='column is-one-quarter'>
-              <TextInputField
-                name='address'
-                label='Street address'
-                value={formData.address}
-                onChange={onChange}
-                type='text'
-                placeholder='e.g. Kyläsaarenkuja 5 B'
-                required
-              />
-            </div>
-            <div className='column is-one-quarter'>
-              <TextInputField
-                name='zip'
-                label='ZIP Code'
-                value={formData.zip}
-                onChange={onChange}
-                type='number'
-                placeholder='e.g. 00220'
-                required
-              />
+        {formData.userType === 'Requester' ? (
+          <div className='row'>
+            <div className='columns'>
+              <div className='column is-one-quarter'>
+                <TextInputField
+                  name='address'
+                  label='Street address'
+                  value={formData.address}
+                  onChange={onChange}
+                  type='text'
+                  placeholder='e.g. Kyläsaarenkuja 5 B'
+                  required
+                />
+              </div>
+              <div className='column is-one-quarter'>
+                <TextInputField
+                  name='zip'
+                  label='ZIP Code'
+                  value={formData.zip}
+                  onChange={onChange}
+                  type='number'
+                  placeholder='e.g. 00220'
+                  required
+                />
+              </div>
             </div>
           </div>
-        </div>
+        ) : (
+          ''
+        )}
+
         <div className='row'>
           <div className='column'>
             <div className='field'>
