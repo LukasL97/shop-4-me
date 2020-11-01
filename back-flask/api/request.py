@@ -193,11 +193,11 @@ def accept_request(request_handler: RequestHandler) -> Response:
         return make_response('Tried accepting request that did not have expected status %d, but status %d' % (error.expected, error.actual), UNPROCESSABLE_ENTITY)
 
 
-@request.route('/requests/open', methods=['GET'])
+@request.route('/requests/open', methods=['POST'])
 def get_open_requests(request_handler: RequestHandler) -> Response:
     '''
     ---
-    get:
+    post:
         summary: get a list of open requests as a Volunteer
         description: Open requests are requests that have been created and submitted by a Requester, but not yet accepted by any Volunteer. Optionally an area can be specified in order to limit the requests to only requests from that area.
         requestBody:
@@ -249,11 +249,11 @@ def get_open_requests(request_handler: RequestHandler) -> Response:
         return make_response('User of type Volunteer with session id %s not found' % body['sessionId'], UNAUTHORIZED)
 
 
-@request.route('/requests/own', methods=['GET'])
+@request.route('/requests/own', methods=['POST'])
 def get_own_requests(request_handler: RequestHandler) -> Response:
     '''
     ---
-    get:
+    post:
         summary: get a list of your own requests as a Requester or Volunteer
         description: If Requester, get a list of requests created by yourself. If Volunteer, get a list of requests accepted by yourself.
         requestBody:

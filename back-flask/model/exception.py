@@ -22,8 +22,9 @@ class UnauthorizedAccessError(RuntimeError):
 
 class ObjectIdNotFoundError(RuntimeError):
 
-    def __init__(self, object_id: str):
+    def __init__(self, object_id: str, object_type: str):
         self.object_id: str = object_id
+        self.object_type: str = object_type
 
 class UnexpectedRequestStatusError(RuntimeError):
 
