@@ -51,6 +51,13 @@ const Navbar = (props) => {
         </li>
         {auth && (
           <li>
+            <NavLink exact activeClassName='active' to='/add-product'>
+              Add Product
+            </NavLink>
+          </li>
+        )}
+        {auth && (
+          <li>
             <NavLink exact activeClassName='active' to='/requests'>
               Requests
             </NavLink>
