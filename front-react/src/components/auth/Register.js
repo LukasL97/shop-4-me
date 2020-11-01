@@ -19,7 +19,7 @@ const options = [
   },
   {
     label: 'Shop Owner',
-    value: 'Shop Owner',
+    value: 'ShopOwner',
   },
 ]
 
@@ -180,8 +180,6 @@ const Register = (props) => {
         address,
         zip,
       }
-    } else if (formData.value === 'Shop Owner') {
-      data.userType = 'ShopOwner'
     } else {
       const {
         firstName,
@@ -207,11 +205,6 @@ const Register = (props) => {
       props.history.push('/login')
     } catch (error) {
       console.log(error)
-    }
-
-    if (formData.agreed) {
-    } else {
-      // setFormData({...formData})
     }
   }
 
