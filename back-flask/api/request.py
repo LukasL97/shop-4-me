@@ -347,6 +347,15 @@ REQUEST_DOCSTRING = '''type: object
                                                                 attributes:
                                                                     type: object
                                                                     description: simple key-value mapping
+                                                        image:
+                                                            type: object
+                                                            properties:
+                                                                id:
+                                                                    type: string
+                                                                    description: image id on cloudinary
+                                                                url:
+                                                                    type: string
+                                                                    description: image url on cloudinary
                                                 amount:
                                                     type: number
                                                     description: amount of this item in the request

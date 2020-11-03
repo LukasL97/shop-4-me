@@ -54,6 +54,15 @@ def find_by_shop_and_category(item_handler: ItemHandler) -> Response:
                                             attributes:
                                                 type: object
                                                 description: simple key-value mapping
+                                    image:
+                                        type: object
+                                        properties:
+                                            id:
+                                                type: string
+                                                description: image id on cloudinary
+                                            url:
+                                                type: string
+                                                description: image url on cloudinary
     '''
     shop_id = request.args.get('shopId', default=None, type=str)
     category = request.args.get('category', default=None, type=str)
@@ -93,6 +102,15 @@ def add_item(item_handler: ItemHandler) -> Response:
                                             attributes:
                                                 type: object
                                                 description: simple key-value mapping
+                                    image:
+                                        type: object
+                                        properties:
+                                            id:
+                                                type: string
+                                                description: image id on cloudinary
+                                            url:
+                                                type: string
+                                                description: image url on cloudinary
                             sessionId:
                                 type: string
                                 description: session id of a logged in user of type ShopOwner
@@ -121,6 +139,8 @@ def add_item(item_handler: ItemHandler) -> Response:
                 shop=body['item']['shop'],
                 description=body['item']['details']['description'],
                 attributes=body['item']['details']['attributes'],
+                image_id=body['item']['image']['id'],
+                image_url=body['item']['image']['url'],
                 session_id=body['sessionId']
             ),
             OK
