@@ -1,6 +1,7 @@
 from flask import Response, request, make_response, jsonify
 from api.http_status import OK, BAD_REQUEST, UNPROCESSABLE_ENTITY, UNAUTHORIZED
-from model.exception import ShopDoesNotExistError, UserSessionIdNotFoundError, UnauthorizedAccessError
+from model.exception import UserSessionIdNotFoundError, UnauthorizedAccessError, \
+    ObjectIdNotFoundError
 from model.item import ItemHandler
 from spec import DocumentedBlueprint
 import os
@@ -124,7 +125,7 @@ def add_item(item_handler: ItemHandler) -> Response:
             400:
                 description: incorrect request body
             401:
-                description: session id not found or session id does not refer to correct ShopOwner
+                description: session id not found or session id does not refer to correct owner of the shop
             422:
                 description: shop does not exist
     '''
@@ -146,9 +147,9 @@ def add_item(item_handler: ItemHandler) -> Response:
         )
     except KeyError:
         return make_response('Request body did not contain required information', BAD_REQUEST)
-    except ShopDoesNotExistError:
+    except ObjectIdNotFoundError:
         return make_response('Tried adding item to non-existing shop', UNPROCESSABLE_ENTITY)
     except UserSessionIdNotFoundError:
         return make_response('User of type ShopOwner with session id %s not found' % body['sessionId'], UNAUTHORIZED)
     except UnauthorizedAccessError:
-        return make_response('User with session id %s does not own shop %s' % (body['sessionId'], body['shop']), UNAUTHORIZED)
+        return make_response('User with session id %s does not own shop %s' % (body['sessionId'], body['item']['shop']), UNAUTHORIZED)
