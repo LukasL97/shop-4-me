@@ -1,11 +1,29 @@
 from flask import Response, request, make_response, jsonify
-
 from api.http_status import OK, BAD_REQUEST, UNPROCESSABLE_ENTITY, UNAUTHORIZED
 from model.exception import ShopDoesNotExistError, UserSessionIdNotFoundError, UnauthorizedAccessError
 from model.item import ItemHandler
 from spec import DocumentedBlueprint
+import os
 
 item = DocumentedBlueprint('item', __name__)
+
+# import cloudinary as Cloud
+
+# cloud_name = 'do6rcsxnl'
+# api_key = '396339244416192'
+# api_secret = 'Yh71wXYj5wmr7E7dNZue3OcQY60'
+
+# Cloud.config.update = ({
+#     'cloud_name':os.environ.get('CLOUDINARY_CLOUD_NAME'),
+#     'api_key': os.environ.get('CLOUDINARY_API_KEY'),
+#     'api_secret': os.environ.get('CLOUDINARY_API_SECRET')
+# })
+
+# Cloud.config.update = ({
+#     'cloud_name':cloud_name,
+#     'api_key':api_key,
+#     'api_secret':api_secret
+# })
 
 
 @item.route('/items/findByShopAndCategory', methods=['GET'])
