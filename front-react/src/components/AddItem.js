@@ -7,6 +7,7 @@ import Layout from './Layout'
 import '../assets/styles/add-item.scss'
 import '../assets/styles/buttons.scss'
 import '../assets/styles/input-file.scss'
+import { getAccessToken } from '../utils/cookies'
 
 const AddItem = (props) => {
   const initialState = {
@@ -33,30 +34,66 @@ const AddItem = (props) => {
     }
   }
 
-  const onSubmit = (e) => {
+  const onSubmit = async (e) => {
     e.preventDefault()
-    console.log(formData)
-    const url = ''
+
     const config = {
       Accept: 'application/json',
       headers: { 'Content-Type': 'multipart/form-data' },
     }
-    const data = new FormData()
-    for (const key in formData) {
-      data.append(key, formData[key])
+
+    const { name, price, category, description, image } = formData
+
+    const imageData = new FormData()
+    imageData.append('file', image)
+    imageData.append('upload_preset', 'ospkjjsq')
+    const option = { method: 'POST', body: imageData }
+
+    const cloudinaryUrl = `https://api.cloudinary.com/v1_1/do6rcsxnl/image/upload`
+    const testData = {
+      item: {
+        name,
+        price: Number(price),
+        category,
+        shop: '5f7b58453e68d38dab7897f5',
+        details: {
+          description,
+          attributes: {},
+        },
+        image: {
+          id: '',
+          url: '',
+        },
+      },
+
+      sessionId: getAccessToken(),
     }
+
+    axios({})
+
+    const response = await fetch(cloudinaryUrl, option)
+    const result = await response.json()
+
+    let id = result.public_id
+    let url = result.secure_url
+    testData.item.image.id = id
+    testData.item.image.url = url
+    console.log(result)
 
     axios({
       method: 'post',
-      url: url,
-      data,
+      headers: { 'content-type': 'application/json' },
+      url: 'http://localhost:5000/item',
+      data: testData,
     })
       .then((response) => {
-        props.fetchData()
+        // props.fetchData()
+        console.log(response)
         props.history.push('/items')
       })
       .catch((err) => {
-        setErrors(err.response.data)
+        console.log(err)
+        // setErrors(err.response.data)
       })
   }
 

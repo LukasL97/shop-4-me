@@ -21,7 +21,7 @@ const CartCards = ({ cart, removeItemFromCart }) => {
       {cart.length > 0 ? (
         <div>
           <p>List of products on your cart</p>
-          <small>Total prices of the items:{sum} Euro</small>
+          <small>Total prices of the items:{sum.toFixed(2)} Euro</small>
         </div>
       ) : (
         ''

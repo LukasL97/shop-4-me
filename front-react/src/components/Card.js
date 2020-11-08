@@ -9,19 +9,18 @@ const buttonStyles = {
 }
 
 const Card = ({
-  item: { name, price, id },
-  image,
+  item: { name, price, id, image, details },
   addItemToCart,
   removeItemFromCart,
   index,
 }) => {
   const [visibility, setVisibility] = useState(false)
-  let formattedPrice = (price / 10).toFixed(2)
+  let formattedPrice = price.toFixed(2)
   return (
     <div className='card'>
       <Link to={`/card/${id}`}>
         <div className='card-image'>
-          <img src={image} alt='' />
+          <img src={image.url} alt='' />
         </div>
         <div>
           <h2>{name}</h2>
@@ -40,9 +39,9 @@ const Card = ({
       </div>
       <div className='card-footer'>
         <div className='icons show'>
-          <i class='fas fa-thumbs-up'></i>
-          <i class='fas fa-thumbs-down'></i>
-          <i class='fas fa-star'></i>
+          <i className='fas fa-thumbs-up'></i>
+          <i className='fas fa-thumbs-down'></i>
+          <i className='fas fa-star'></i>
         </div>
         <div>
           <small>{formattedPrice}</small>

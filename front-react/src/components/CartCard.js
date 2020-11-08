@@ -14,7 +14,7 @@ const CartCard = (props) => {
       </div>
       <div>
         <p> {props.item.name}</p>
-        <small>Price: {props.item.price / 10} euro</small>
+        <small>Price: {props.item.price} euro</small>
       </div>
 
       <div>
