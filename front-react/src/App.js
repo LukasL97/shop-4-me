@@ -10,7 +10,6 @@ import Home from './components/Home'
 import NotFound from './components/NotFound'
 import CardDetail from './components/CardDetail'
 import { items } from './dummy_data/items'
-import { requests } from './dummy_data/requests'
 
 import CartCard from './components/CartCard'
 import PrivateRoute from './components/shared/PrivateRoute'
@@ -21,13 +20,14 @@ import Requests from './components/Requests'
 import { useFetch } from './services/useFetch'
 import AddItem from './components/AddItem'
 import Register from './components/auth/Register'
+import Cookies from 'universal-cookie'
 
 const accessToken = getAccessToken()
 
 const App = (props) => {
   const [data, setData] = useState([])
   const [cart, setCart] = useState([])
-  const [requestData, setRequests] = useState(requests)
+  const [requestData, setRequests] = useState([])
   useEffect(() => {
     fetchData()
     const cartStr = JSON.stringify(cart)
@@ -43,15 +43,26 @@ const App = (props) => {
   }
 
   const fetchData = async () => {
-    const url = 'http://localhost:5000/items/findByShopAndCategory'
-    const response = await axios.get(url)
-
-    const data = response.data.map((item) => {
+    let data = (await axios.get('http://localhost:5000/items/findByShopAndCategory')).data.map((item) => {
       item.image = getRandomImage()
       return item
     })
     setData(data)
-    // setRequests()
+    const cookies = new Cookies();
+    let open_requests = cookies.get('user_type') == 'Volunteer' ?
+      (await axios.post('http://localhost:5000/requests/open', {
+        sessionId: cookies.get('access_token'),
+        area: {
+          range: 100,
+          lat: 0,
+          lng: 0
+        }
+      })).data : []
+    let own_requests = (await axios.post('http://localhost:5000/requests/own', {
+        userType: cookies.get('user_type'),
+        sessionId: cookies.get('access_token')
+    })).data
+    setRequests(own_requests.push(...open_requests))
   }
 
   return (
