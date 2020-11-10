@@ -141,67 +141,32 @@ const Register = (props) => {
 
   const onSubmit = async (e) => {
     e.preventDefault()
-    const callback = (res) => {
-      console.log(res)
-      const cookies = new Cookies()
-      cookies.set('access_token', res.data, {
-        path: '/',
-        expires: new Date(new Date().getTime() + 60 * 60 * 1000),
-      })
-      cookies.set('user_type', formData.userType, {
-        path: '/',
-        expires: new Date(new Date().getTime() + 60 * 60 * 1000),
-      })
-    }
-
-    let data
-    const loginName = formData.email
-
-    if (formData.userType === 'Requester') {
-      const {
-        userType,
-        firstName,
-        lastName,
-        email,
-        password,
-        agreed,
-        address,
-        zip,
-      } = formData
-
-      data = {
-        userType,
-        firstName,
-        lastName,
-        email,
-        loginName,
-        password,
-        agreed,
-        address,
-        zip,
-      }
-    } else {
-      const {
-        firstName,
-        userType,
-        lastName,
-        email,
-        password,
-        agreed,
-      } = formData
-      data = {
-        firstName,
-        lastName,
-        email,
-        loginName,
-        password,
-        agreed,
-        userType,
-      }
-    }
+	
+	formData.loginName = formData.email
 
     try {
-      await axios.post('http://localhost:5000/register', data).then(callback)
+      const cookies = new Cookies()
+      await axios.post('http://localhost:5000/register', formData).then((res) => {
+        console.log(res)
+        cookies.set('access_token', res.data, {
+          path: '/',
+          expires: new Date(new Date().getTime() + 60 * 60 * 1000),
+        })
+        cookies.set('user_type', formData.userType, {
+          path: '/',
+          expires: new Date(new Date().getTime() + 60 * 60 * 1000),
+        })
+      })
+      if (cookies.get('user_type') == 'Requester') {
+        await axios.put('http://localhost:5000/requester/address', {
+          address: {
+              street: formData.address,
+              zip: formData.zip,
+              country: "Finland"
+          },
+          sessionId: cookies.get('access_token')
+        })
+      }
       props.history.push('/login')
     } catch (error) {
       console.log(error)
