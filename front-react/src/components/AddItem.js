@@ -87,13 +87,11 @@ const AddItem = (props) => {
       data: testData,
     })
       .then((response) => {
-        // props.fetchData()
-        console.log(response)
-        props.history.push('/items')
+        props.fetchData()
+        props.history.push('/')
       })
       .catch((err) => {
-        console.log(err)
-        // setErrors(err.response.data)
+        setErrors(err.response.data)
       })
   }
 

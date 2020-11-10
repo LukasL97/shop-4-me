@@ -30,6 +30,23 @@ const App = (props) => {
   }, [cart])
 
   const addItemToCart = (item) => setCart([...cart, item])
+  const filterProducts = (search) => {
+    const filteredData = data.filter((item) => {
+      const {
+        name,
+        category,
+        details: { description },
+      } = item
+      return (
+        name.toLowerCase().includes(search) ||
+        category.toLowerCase().includes(search) ||
+        description.toLowerCase().includes(search)
+      )
+    })
+    if (search) {
+      setData(filteredData)
+    }
+  }
 
   const removeItemFromCart = (index) => {
     const cartItems = [...cart]
@@ -79,7 +96,10 @@ const App = (props) => {
           path='/requests'
           component={(props) => <Requests {...props} requests={requestData} />}
         />
-        <PrivateRoute path='/add-product' component={(props) => <AddItem />} />
+        <PrivateRoute
+          path='/add-product'
+          component={(props) => <AddItem {...props} fetchData={fetchData} />}
+        />
 
         <Route
           exact
@@ -89,6 +109,7 @@ const App = (props) => {
               data={data}
               addItemToCart={addItemToCart}
               removeItemFromCart={removeItemFromCart}
+              filterProducts={filterProducts}
             />
           )}
         />
