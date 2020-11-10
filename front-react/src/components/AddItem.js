@@ -153,7 +153,7 @@ const AddItem = (props) => {
             </div>
           )}
 
-          <div className='form-group file-upload'>
+          <div className=' file-upload'>
             <input
               type='file'
               onChange={onChange}

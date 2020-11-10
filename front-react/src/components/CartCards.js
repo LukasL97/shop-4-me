@@ -35,7 +35,6 @@ const CartCards = ({ cart, clearCart, removeItemFromCart, history }) => {
       <CartCard
         item={item}
         index={index}
-        image={getRandomImage()}
         removeItemFromCart={removeItemFromCart}
       />
     )
