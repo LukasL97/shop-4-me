@@ -42,6 +42,10 @@ const App = (props) => {
     setCart(cartItems)
   }
 
+  const clearCart = () => {
+    setCart([])
+  }
+
   const fetchData = async () => {
     const url = 'http://localhost:5000/items/findByShopAndCategory'
     const response = await axios.get(url)
@@ -71,6 +75,7 @@ const App = (props) => {
             <CartCards
               {...props}
               cart={cart}
+              clearCart={clearCart}
               removeItemFromCart={removeItemFromCart}
             />
           )}
