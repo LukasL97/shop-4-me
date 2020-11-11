@@ -58,7 +58,7 @@ class AvailabilityCalendar extends Component {
 	
 			const calendarData = response.data.map((timeframe) => ({
 				...timeframe,
-				nrequests: (timeframe.requests || []).length()
+				nrequests: (timeframe.requests || []).length
 			})).map((timeframe) => ({
 				start: timeframe.start,
 				end: timeframe.end,
