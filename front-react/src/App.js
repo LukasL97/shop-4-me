@@ -1,17 +1,14 @@
 import React, { Component, useState, useEffect } from 'react'
 import axios from 'axios'
-// import Login from './Login'
 import Login from './components/auth/Login'
-import { BrowserRouter as Router, Route, Link, Switch } from 'react-router-dom'
+import { BrowserRouter as Router, Route, Switch } from 'react-router-dom'
 import Navbar from './components/Navbar'
 import Cards from './components/Cards'
 import About from './components/About'
 import Home from './components/Home'
 import NotFound from './components/NotFound'
 import CardDetail from './components/CardDetail'
-import { items } from './dummy_data/items'
 import { requests } from './dummy_data/requests'
-
 import CartCard from './components/CartCard'
 import PrivateRoute from './components/shared/PrivateRoute'
 import { getAccessToken } from './utils/cookies'
@@ -21,8 +18,6 @@ import Requests from './components/Requests'
 import { useFetch } from './services/useFetch'
 import AddItem from './components/AddItem'
 import Register from './components/auth/Register'
-
-const accessToken = getAccessToken()
 
 const App = (props) => {
   const [data, setData] = useState([])
@@ -49,11 +44,7 @@ const App = (props) => {
   const fetchData = async () => {
     const url = 'http://localhost:5000/items/findByShopAndCategory'
     const response = await axios.get(url)
-
-    const data = response.data.map((item) => {
-      item.image = getRandomImage()
-      return item
-    })
+    const data = response.data
     setData(data)
     // setRequests()
   }

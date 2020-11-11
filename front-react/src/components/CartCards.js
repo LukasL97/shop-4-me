@@ -35,7 +35,6 @@ const CartCards = ({ cart, clearCart, removeItemFromCart, history }) => {
       <CartCard
         item={item}
         index={index}
-        image={getRandomImage()}
         removeItemFromCart={removeItemFromCart}
       />
     )
@@ -45,7 +44,7 @@ const CartCards = ({ cart, clearCart, removeItemFromCart, history }) => {
       {cart.length > 0 ? (
         <div>
           <p>List of products on your cart</p>
-          <small>Total prices of the items:{sum} Euro</small>
+          <small>Total prices of the items:{sum.toFixed(2)} Euro</small>
         </div>
       ) : (
         ''

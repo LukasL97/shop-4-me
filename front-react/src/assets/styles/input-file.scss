@@ -1,11 +1,10 @@
 .add-item-container {
   .file-upload {
-    width: 450px;
-    height: 300px;
     display: flex;
     flex-direction: column;
     justify-content: space-around;
     align-items: center;
+    margin-top: 30px;
   }
 
   .inputfile {
@@ -24,14 +23,14 @@
     background-color: rgb(238, 230, 230);
     display: inline-block;
     cursor: pointer; /* "hand" cursor */
-    padding: 5px 10px;
     border-radius: 5px;
     margin: 10px 0;
+    padding: 15px 50px;
   }
 
   .inputfile:focus + label,
   .inputfile + label:hover {
-    background-color: rgb(233, 26, 26);
+    background-color: rgb(240, 218, 218);
   }
   .inputfile + label * {
     pointer-events: none;
@@ -39,8 +38,10 @@
   .inputfile:focus + label {
     outline: -webkit-focus-ring-color auto 5px;
     padding: 15px 50px;
+    border: none;
+    outline: none;
   }
-//   .fa-image {
-//     font-size: 150px !important;
-//   }
+  // .fa-image {
+  //   font-size: 50px !important;
+  // }
 }
