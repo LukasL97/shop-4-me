@@ -61,5 +61,9 @@ class ShopHandler(AbstractHandler):
         id = self.dao.store_one(shop.to_db_object())
         return id
 
-    def get_shops(self) -> List[Dict[str, Any]]:
-        return [self.from_db_object(db_obj).to_response() for db_obj in self.dao.get_all()]
+    def get_shops(self, session_id: Optional[str] = None) -> List[Dict[str, Any]]:
+        if session_id is None:
+            db_objects = self.dao.get_all()
+        else:
+            db_objects = self.dao.get_by_shop_owner_id(self.shop_owner_handler.get_user_id_from_session_id(session_id))
+        return [self.from_db_object(db_obj).to_response() for db_obj in db_objects]

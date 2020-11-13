@@ -1,6 +1,6 @@
 from flask import Response, request, make_response, jsonify
 
-from api.http_status import OK, BAD_REQUEST, UNAUTHORIZED, UNPROCESSABLE_ENTITY
+from api.http_status import OK, BAD_REQUEST, UNAUTHORIZED, UNPROCESSABLE_ENTITY, NOT_FOUND
 from model.exception import UserSessionIdNotFoundError, UnexpectedNumberOfLocationsForAddressError
 from model.shop import ShopHandler
 from spec import DocumentedBlueprint
@@ -79,10 +79,16 @@ def get_shops(shop_handler: ShopHandler) -> Response:
     '''
     ---
     get:
-        summary: get all shops
+        summary: get all shops, or only your own shops as a ShopOwner
+        parameters:
+            -   name: sessionId
+                type: string
+                description: session id of a ShopOwner, if given filter shops to only ones belonging to this ShopOwner
+                required: false
+                in: query
         responses:
             200:
-                description: list of all shops
+                description: list of all shops, or your own shops as a ShopOwner
                 content:
                     array:
                         schema:
@@ -116,5 +122,9 @@ def get_shops(shop_handler: ShopHandler) -> Response:
                                         type: string
                                         description: id of the ShopOwner owning this shop
     '''
-    return make_response(jsonify(shop_handler.get_shops()), OK)
+    session_id = request.args.get('sessionId', default=None, type=str)
+    try:
+        return make_response(jsonify(shop_handler.get_shops(session_id=session_id)), OK)
+    except UserSessionIdNotFoundError:
+        return make_response('No shop owner with session id %s found' % session_id, NOT_FOUND)
 

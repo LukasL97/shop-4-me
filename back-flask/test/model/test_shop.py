@@ -66,3 +66,23 @@ class ShopHandlerTest(TestCase):
         self.assertEqual(len(shops), 2)
         self.assertIn(shop_1_id, [shop['id'] for shop in shops])
         self.assertIn(shop_2_id, [shop['id'] for shop in shops])
+
+    def test_get_shops_correctly_with_session_id(self):
+        session_id = 'sessionId'
+        shop_owner_id = str(ObjectId())
+        shop_owner = ShopOwner('login', 'pw', 'first', 'last', shop_owner_id)
+        self.shop_owner_handler.active_user_sessions[session_id] = shop_owner
+        address_1 = Address('Street 1', '12345', 'Country 1', 42.42, 13.37)
+        address_2 = Address('Street 2', '54321', 'Country 2', 8.15, 44.44)
+        shop_1 = Shop('Shop 1', address_1, shop_owner_id)
+        shop_2 = Shop('Shop 2', address_2, str(ObjectId()))
+        shop_1_id = self.dao.store_one(shop_1.to_db_object())
+        shop_2_id = self.dao.store_one(shop_2.to_db_object())
+        shops = self.shop_handler.get_shops(session_id=session_id)
+        self.assertEqual(len(shops), 1)
+        self.assertEqual(shops[0]['id'], shop_1_id)
+
+    def test_get_shops_with_unknown_session_id(self):
+        self.assertEqual(len(self.shop_owner_handler.active_user_sessions), 0)
+        with self.assertRaises(UserSessionIdNotFoundError):
+            self.shop_handler.get_shops(session_id='sessionId')
