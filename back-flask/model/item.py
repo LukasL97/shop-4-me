@@ -1,15 +1,16 @@
 from __future__ import annotations
 
-from typing import Optional, Dict, Any, List
+from typing import Optional, Dict, Any, List, cast
 
 from bson import ObjectId
 from injector import inject
 
 from dao.items_dao import ItemsDAO
 from model.abstract_model import AbstractModel, AbstractHandler
-from model.exception import UserSessionIdNotFoundError
+from model.exception import UserSessionIdNotFoundError, ObjectIdNotFoundError, UnauthorizedAccessError
 from model.image import Image
 from model.product_details import ProductDetails
+from model.shop import ShopHandler, Shop
 from model.user import ShopOwnerHandler
 
 
@@ -56,9 +57,10 @@ class Item(AbstractModel):
 class ItemHandler(AbstractHandler):
 
     @inject
-    def __init__(self, dao: ItemsDAO, shop_owner_handler: ShopOwnerHandler):
-        self.dao = dao
-        self.shop_owner_handler = shop_owner_handler
+    def __init__(self, dao: ItemsDAO, shop_owner_handler: ShopOwnerHandler, shop_handler: ShopHandler):
+        self.dao: ItemsDAO = dao
+        self.shop_owner_handler: ShopOwnerHandler = shop_owner_handler
+        self.shop_handler: ShopHandler = shop_handler
         super().__init__(Item, dao)
 
     def from_db_object(self, db_object: Dict[str, Any]) -> Item:
@@ -79,12 +81,9 @@ class ItemHandler(AbstractHandler):
     def validate(self, item: Item, session_id: str) -> None:
         if session_id not in self.shop_owner_handler.active_user_sessions:
             raise UserSessionIdNotFoundError
-        # elif False:
-        #     # TODO: ensure that shop is actually in database
-        #     raise ShopDoesNotExistError
-        # elif False:
-        #     # TODO: ensure that shop is owned by correct ShopOwner
-        #     raise UnauthorizedAccessError
+        shop = cast(Shop, self.shop_handler.get_from_id(item.shop))
+        if not shop.owner == self.shop_owner_handler.active_user_sessions[session_id].id:
+            raise UnauthorizedAccessError
 
     def add_item(self,
                  name: str,
