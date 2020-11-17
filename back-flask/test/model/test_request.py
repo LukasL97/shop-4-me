@@ -12,6 +12,7 @@ from model.location.address import AddressHandler, Address
 from model.product_details import ProductDetails
 from model.request import RequestHandler, Request
 from model.request_status import RequestStatus
+from model.shop import ShopHandler
 from model.user import Requester, Volunteer, ShopOwnerHandler, RequesterHandler, VolunteerHandler
 from test.model.util.stubs import AddressLocatorStub
 from test.mongodb_integration_test_setup import get_empty_local_test_db
@@ -19,10 +20,10 @@ from test.mongodb_integration_test_setup import get_empty_local_test_db
 
 class RequestHandlerTest(TestCase):
 
-    db = get_empty_local_test_db(['Requests', 'Items'])
+    db = get_empty_local_test_db(['Requests', 'Items', 'Shops'])
     requests_dao = RequestsDAO(db)
     items_dao = ItemsDAO(db)
-    item_handler = ItemHandler(items_dao, ShopOwnerHandler(None))
+    item_handler = ItemHandler(items_dao, ShopOwnerHandler(None), None)
     requester_handler = RequesterHandler(None, None)
     volunteer_handler = VolunteerHandler(None)
     locator = AddressLocatorStub()

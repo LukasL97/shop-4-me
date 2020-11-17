@@ -1,24 +1,34 @@
 from unittest import TestCase
 from unittest.mock import Mock
 
+from bson import ObjectId
+
 from dao.items_dao import ItemsDAO
-from model.exception import UserSessionIdNotFoundError
+from dao.shops_dao import ShopsDAO
+from model.exception import UserSessionIdNotFoundError, ObjectIdNotFoundError, UnauthorizedAccessError
 from model.image import Image
 from model.item import Item, ItemHandler
+from model.location.address import AddressHandler, Address
 from model.product_details import ProductDetails
-from model.user import ShopOwnerHandler
+from model.shop import ShopHandler, Shop
+from model.user import ShopOwnerHandler, ShopOwner
+from test.model.util.stubs import AddressLocatorStub
 from test.mongodb_integration_test_setup import get_empty_local_test_db
 
 
 class ItemHandlerTest(TestCase):
 
     db = get_empty_local_test_db(['Items'])
-    dao = ItemsDAO(db)
+    items_dao = ItemsDAO(db)
     shop_owner_handler = ShopOwnerHandler(None)
-    item_handler = ItemHandler(dao, shop_owner_handler)
+    shops_dao = ShopsDAO(db)
+    address_handler = AddressHandler(None)
+    shop_handler = ShopHandler(shops_dao, shop_owner_handler, address_handler)
+    item_handler = ItemHandler(items_dao, shop_owner_handler, shop_handler)
 
     def setUp(self):
-        self.dao.clear()
+        self.items_dao.clear()
+        self.shops_dao.clear()
         self.shop_owner_handler.active_user_sessions.clear()
 
     def test_add_item_correctly(self):
@@ -26,20 +36,23 @@ class ItemHandlerTest(TestCase):
         name = 'ItemName'
         price = 42.42
         category = 'Category'
-        shop = '5f7c28c6e979c6a33a1f3f79'
         description = 'This is some item'
         attributes = {'att1': 42, 'att2': 'bla'}
         image_id = 'imageId'
         image_url = 'https://image.com'
-        self.shop_owner_handler.active_user_sessions[session_id] = Mock()
-        item_id = self.item_handler.add_item(name, price, category, shop, description, attributes, image_id, image_url, session_id)
-        items = self.dao.get_all()
+        owner_id = str(ObjectId())
+        owner = ShopOwner('login', 'pw', 'first', 'last', id=owner_id)
+        self.shop_owner_handler.active_user_sessions[session_id] = owner
+        shop = Shop('Shop', Address('', '', '', 0, 0), owner_id)
+        shop_id = self.shops_dao.store_one(shop.to_db_object())
+        item_id = self.item_handler.add_item(name, price, category, shop_id, description, attributes, image_id, image_url, session_id)
+        items = self.items_dao.get_all()
         self.assertEqual(len(items), 1)
         self.assertEqual(str(items[0]['_id']), item_id)
         self.assertEqual(items[0]['name'], name)
         self.assertEqual(items[0]['price'], price)
         self.assertEqual(items[0]['category'], category)
-        self.assertEqual(str(items[0]['shop']), shop)
+        self.assertEqual(str(items[0]['shop']), shop_id)
         self.assertEqual(items[0]['details']['description'], description)
         self.assertEqual(items[0]['details']['attributes'], attributes)
         self.assertEqual(items[0]['image']['id'], image_id)
@@ -49,6 +62,24 @@ class ItemHandlerTest(TestCase):
         self.shop_owner_handler.active_user_sessions['someSessionId'] = Mock()
         with self.assertRaises(UserSessionIdNotFoundError):
             self.item_handler.add_item('ItemName', 42.42, 'Category', '5f7c28c6e979c6a33a1f3f79', 'description', {}, 'imageId', 'imageUrl', 'otherSessionId')
+
+    def test_add_item_with_unknown_shop_id(self):
+        session_id = 'sessionId'
+        self.shop_owner_handler.active_user_sessions[session_id] = Mock()
+        self.assertEqual(len(self.shops_dao.get_all()), 0)
+        with self.assertRaises(ObjectIdNotFoundError):
+            self.item_handler.add_item('ItemName', 42.42, 'Category', str(ObjectId()), 'description', {}, 'imageId', 'imageUrl', session_id)
+
+    def test_add_item_with_incorrect_owner_id(self):
+        session_id = 'sessionId'
+        owner_id = str(ObjectId())
+        other_owner_id = str(ObjectId())
+        owner = ShopOwner('login', 'pw', 'first', 'last', id=other_owner_id)
+        self.shop_owner_handler.active_user_sessions[session_id] = owner
+        shop = Shop('Shop', Address('', '', '', 0, 0), owner_id)
+        shop_id = self.shops_dao.store_one(shop.to_db_object())
+        with self.assertRaises(UnauthorizedAccessError):
+            self.item_handler.add_item('Item', 42.42, 'Category', shop_id, 'Description', {}, 'imageId', 'imageUrl', session_id)
 
     def test_get_items_by_shop_and_category(self):
         dao = ItemsDAO(self.db)
