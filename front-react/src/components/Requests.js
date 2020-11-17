@@ -5,9 +5,11 @@ import Layout from './Layout'
 import '../assets/styles/request.scss'
 
 const Requests = (props) => {
+  const requests = props.requests || []
+  console.log("requests: ", requests)
   return (
     <Layout>
-      {props.requests.length ? (
+      {requests.length ? (
         <Request />
       ) : (
         <div>
@@ -16,9 +18,9 @@ const Requests = (props) => {
       )}
       <div>
         <div>
-          <p>Total request: {props.requests.length}</p>
+          <p>Total request: {requests.length}</p>
         </div>
-        {props.requests.map((request) => (
+        {requests.map((request) => (
           <Request request={request} date={new Date()} />
         ))}
       </div>

@@ -46,21 +46,25 @@ const App = (props) => {
     const response = await axios.get(url)
     const data = response.data
     setData(data)
-    const cookies = new Cookies();
-    let open_requests = cookies.get('user_type') == 'Volunteer' ?
-      (await axios.post('http://localhost:5000/requests/open', {
-        sessionId: cookies.get('access_token'),
-        area: {
-          range: 100,
-          lat: 0,
-          lng: 0
-        }
-      })).data : []
-    let own_requests = (await axios.post('http://localhost:5000/requests/own', {
-        userType: cookies.get('user_type'),
-        sessionId: cookies.get('access_token')
-    })).data
-    setRequests(own_requests.push(...open_requests))
+	const cookies = new Cookies();
+	if (cookies.get('access_token')) {
+		let open_requests = cookies.get('user_type') == 'Volunteer' ?
+		(await axios.post('http://localhost:5000/requests/open', {
+			sessionId: cookies.get('access_token'),
+			area: {
+			range: 100,
+			lat: 0,
+			lng: 0
+			}
+		})).data : []
+		let own_requests = (await axios.post('http://localhost:5000/requests/own', {
+			userType: cookies.get('user_type'),
+			sessionId: cookies.get('access_token')
+		})).data
+		
+		own_requests.push(...open_requests)
+		setRequests(own_requests)
+	}
   }
 
   return (
