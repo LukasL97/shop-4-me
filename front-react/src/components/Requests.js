@@ -6,7 +6,6 @@ import '../assets/styles/request.scss'
 
 const Requests = (props) => {
   const requests = props.requests || []
-  console.log("requests: ", requests)
   return (
     <Layout>
       {requests.length ? (
