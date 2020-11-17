@@ -1,0 +1,323 @@
+'use strict';
+var ADTERRORHANDLER = ADTERRORHANDLER || (function () {
+    return {
+        trackUrl: 'https://log.adtraction.fail/error',
+        captureError: function (ex) {
+            try {
+                var errorData = {
+                    version: "5",
+                    source: "jsTag",
+                    ap: ADT && ADT.Tag ? ADT.Tag.ap : null,
+                    guid: ADT && ADT.Tag ? ADT.Tag.guid : null,
+                    name: ex.name, // e.g. ReferenceError
+                    message: ex.line, // e.g. x is undefined
+                    url: document.location.href,
+                    stack: ex.stack // stacktrace string; remember, different per-browser!
+                };
+                var trackUrl = ADTERRORHANDLER.trackUrl;
+                if (trackUrl && trackUrl.length > 0) {
+                    if (!navigator.sendBeacon) {
+                        //ajax
+                        if (window.XMLHttpRequest) {
+                            var request = new XMLHttpRequest();
+                            request.open('POST', trackUrl, true);
+                            request.setRequestHeader("Content-Type", "application/json");
+                            request.onreadystatechange = function () { // Call a function when the state changes.
+                                if (this.readyState === XMLHttpRequest.DONE && this.status === 200) {
+                                    // Request finished. Do processing here.
+                                }
+                            };
+                            request.onerror = function () {
+                                // There was a connection error of some sort
+                            };
+                            request.send(JSON.stringify(errorData));
+                        }
+                    } else {
+                        //beacon
+                        var status = navigator.sendBeacon(trackUrl, JSON.stringify(errorData));
+                    }
+                }
+            } catch (e) {
+                console.error(e);
+            }
+        },
+
+        oldOnError: window.onerror,
+
+        onError: function (eventOrMessage, url, lineNo, columnNo, error) {
+            try {
+                if (ADTERRORHANDLER.oldOnError) ADTERRORHANDLER.oldOnError(eventOrMessage, url, lineNo, columnNo, error);	// Call any previously assigned handler
+                if (typeof eventOrMessage !== 'string') {
+                    error = eventOrMessage.error;
+                    url = eventOrMessage.filename || eventOrMessage.fileName;
+                    lineNo = eventOrMessage.lineno || eventOrMessage.lineNumber;
+                    columnNo = eventOrMessage.colno || eventOrMessage.columnNumber;
+                    eventOrMessage = eventOrMessage.message || eventOrMessage.name || error.message || error.name;
+                }
+
+                if (url && url.includes("jsTag")) {
+                    if (error) {
+                        ADTERRORHANDLER.captureError(error);
+                    } else {
+                        ADTERRORHANDLER.captureError(new Error([eventOrMessage, ' Occurred in jsTag:', lineNo || '?', ':', columnNo || '?'].join('')));
+                    }
+                }
+                return false;
+            } catch (e) {
+                console.error(e);
+            }
+        }
+    }
+}());
+window.onerror = ADTERRORHANDLER.onError;
+
+try{
+
+var ADT = ADT || {};
+ADT.Tag = ADT.Tag || {};
+ADT.Tag.guidCookieName = "at_gd";
+
+ADT.Tag.ap = 1196076713;
+ADT.Tag.eventHost = "https://in.matsmart.fi";
+ADT.Tag.tk = 1;
+ADT.Tag.trt = 4;
+ADT.Tag.programDomains = ['www.matsmart.fi'];
+ADT.Tag.ptnUrl = 'https://valuesportal.com';
+
+ADT.Tag.getQueryParameter = function (name) {
+    try {
+    var url = window.location.href;
+    name = name.replace(/[\[\]]/g, '\\$&');
+    var regex = new RegExp('[?&]' + name + '(=([^&#]*)|&|#|$)');
+    var results = regex.exec(url);
+    if (!results) return null;
+    if (!results[2]) return '';
+    return decodeURIComponent(results[2].replace(/\+/g, ' '));
+    } catch (e) {
+        ADTERRORHANDLER.captureError(e);
+    }
+};
+
+ADT.Tag.setCookie = function (name, value) {
+    try {
+    var today = new Date();
+    var maxDate = new Date(today.getTime() + (365 * 1000 * 60 * 60 * 24));
+    document.cookie = name + "=" + value + "; expires=" + maxDate.toGMTString() + "; path=/;domain=" + ADT.Tag.cookieDomain;
+    } catch (e) {
+        ADTERRORHANDLER.captureError(e);
+    }
+};
+
+ADT.Tag.getCookie = function getCookie(cname) {
+    try {
+    var name = cname + "=";
+    var decodedCookie = document.cookie;
+    var ca = decodedCookie.split(';');
+    for (var i = 0; i < ca.length; i++) {
+        var c = ca[i];
+        while (c.charAt(0) == ' ') {
+            c = c.substring(1);
+        }
+        if (c.indexOf(name) == 0) {
+            return c.substring(name.length, c.length);
+        }
+    }
+    return "";
+    } catch (e) {
+        ADTERRORHANDLER.captureError(e);
+    }
+};
+
+ADT.Tag.getURLParameter = function () {
+    try {
+    var href = document.location.href;
+    var queryUrl = null;
+    if (href.indexOf("adt_url=") > -1) {
+        queryUrl = href.substr(href.indexOf("adt_url=") + 8);
+        var redirectURL;
+        try {
+            redirectURL = new URL(queryUrl);
+            if (ADT.Tag.programDomains.includes(redirectURL.hostname)) {
+                return queryUrl;
+            }
+        } catch (e) {
+            ADTERRORHANDLER.captureError(e);
+            return null;
+        }
+    }
+    return null;
+    } catch (e) {
+        ADTERRORHANDLER.captureError(e);
+    }
+};
+
+ADT.Tag.getCookieValue = function (cname) {
+    try {
+    var name = cname + "=";
+    var decodedCookie = document.cookie;
+    var ca = decodedCookie.split(';');
+    for (var i = 0; i < ca.length; i++) {
+        var c = ca[i];
+        while (c.charAt(0) == ' ') {
+            c = c.substring(1);
+        }
+        if (c.indexOf(name) == 0) {
+            return c.substring(name.length, c.length);
+        }
+    }
+    return null;
+    } catch (e) {
+        ADTERRORHANDLER.captureError(e);
+    }
+};
+
+ADT.Tag.getCN = function () {
+    try {
+    var decodedCookie = document.cookie;
+    var ca = decodedCookie.split(';');
+    for (var i = 0; i < ca.length; i++) {
+        var c = ca[i];
+        while (c.charAt(0) == ' ') {
+            c = c.substring(1);
+        }
+        if (c.indexOf("at.") == 0) {
+            return c.substring(0, c.indexOf("="));
+        }
+    }
+    return null;
+    } catch (e) {
+        ADTERRORHANDLER.captureError(e);
+    }
+};
+
+ADT.Tag.doEvent = function (t, am, c, ti, tp, cpn, xd) {
+    try {
+    ADT.Tag.t = typeof ADT.Tag.t === "undefined" ? 3 : ADT.Tag.t;
+    ADT.Tag.c = typeof ADT.Tag.c === "undefined" ? "SEK" : ADT.Tag.c;
+    t = typeof t === "undefined" ? ADT.Tag.t : t;
+    am = typeof am === "undefined" ? ADT.Tag.am : am;
+    c = typeof c === "undefined" ? ADT.Tag.c : c;
+    ti = typeof ti === "undefined" ? ADT.Tag.ti : ti;
+    tp = typeof tp === "undefined" ? ADT.Tag.tp : tp;
+    cpn = typeof cpn === "undefined" ? ADT.Tag.cpn : cpn;
+    if (cpn && cpn.length > 0) {
+        cpn = encodeURIComponent(cpn);
+    }
+    xd = typeof xd === "undefined" ? ADT.Tag.xd : xd;
+
+    var saleQuery = "t=" + t + "&tk=" + ADT.Tag.tk + "&am=" + am + "&c=" + c + "&ti=" + ti + "&tp=" + tp + "&trt=" + ADT.Tag.trt + "&cpn=" + cpn + "&ap=" + ADT.Tag.ap + "&xd=" + xd + "&tt=1";
+    var salePath = "/t/t";
+    // check for at_gd cookie
+    var guid = ADT.Tag.getCookieValue("at_gd");
+    if (guid != null) {
+        saleQuery += "&at_gd=" + guid;
+    }
+    var cn = ADT.Tag.getCN();
+    if (cn != null) {
+        var cv = ADT.Tag.getCookieValue(cn);
+        saleQuery += "&cn=" + cn + "&cv=" + cv;
+    }
+
+    // webKit workaround for inApp browsers. See: https://bugs.webkit.org/show_bug.cgi?id=193508
+    var userAgent = window.navigator.userAgent.toLowerCase(),
+        downgrade = /samsungbrowser|crios|edge|gsa|instagram|fban|fbios/.test(userAgent);
+
+    if (!navigator.sendBeacon || downgrade) {
+        var imgEl = document.createElement("img");
+        imgEl.src = ADT.Tag.eventHost + salePath + "?" + saleQuery;
+        imgEl.width = 1;
+        imgEl.height = 1;
+        imgEl.style.cssText = "display:none";
+        document.body.appendChild(imgEl);
+        console.log("Triggered event: " + ADT.Tag.eventHost + salePath + "?" + saleQuery + " using image element.");
+    } else {
+        navigator.sendBeacon(ADT.Tag.eventHost + salePath + "?" + saleQuery);
+        console.log("Triggered event: " + ADT.Tag.eventHost + salePath + "?" + saleQuery + " using beacon.");
+    }
+    console.log(ADT.Tag.eventHost + salePath + "?" + saleQuery);
+    } catch (e) {
+        ADTERRORHANDLER.captureError(e);
+    }
+};
+
+ADT.Tag.loadPTN = function () {
+    try {
+    var ptn = function () {
+        try{
+        var divId = 'adtraction-plus';
+
+        var divElement = document.getElementById(divId);
+        console.log('jstag document.getElementById(' + divId + ')', divElement);
+        if (divElement) {
+            console.log('jstag found ptn div');
+            var script = document.createElement("script");
+            script.type = 'text/javascript';
+
+            var ptnUrl = ADT.Tag.ptnUrl;
+
+            script.src = ptnUrl + "/widget/widget.js"
+
+            script.async = true;
+            script.defer = true;
+
+            script.onreadystatechange = function () {
+                console.log('jstag script.onreadystatechange');
+            };
+            script.onload = function () {
+                console.log('jstag script.onload');
+            };
+
+            document.head.appendChild(script);  // could change 'head' to 'body' to add it to the end of the body section instead
+        }
+        } catch (e) {
+            ADTERRORHANDLER.captureError(e);
+        }
+    }
+
+    if (document.readyState !== 'loading') {
+        ptn();
+    } else {
+        document.addEventListener("DOMContentLoaded", function (event) {
+            ptn();
+        });
+    }
+    } catch (e) {
+        ADTERRORHANDLER.captureError(e);
+    }
+}
+
+ADT.Tag.main = function () {
+    try {
+    ADT.Tag.cookieDomain = document.domain.substr(0, 4) == "www." ? document.domain.substr(3) : document.domain;
+    ADT.Tag.cv = ADT.Tag.getQueryParameter("cv");
+    ADT.Tag.guid = ADT.Tag.getQueryParameter("at_gd");
+
+    if (ADT.Tag.cv != null) {
+        ADT.Tag.setCookie(ADT.Tag.guidCookieName, ADT.Tag.cv);
+    }
+    if (ADT.Tag.guid != null) {
+        ADT.Tag.setCookie(ADT.Tag.guidCookieName, ADT.Tag.guid);
+    }
+    // do redirect if url parameter is present
+    if (ADT.Tag.getURLParameter() != null) {
+        window.location.href = ADT.Tag.getURLParameter();
+    }
+
+    if (typeof ADT.Tag.tp !== "undefined") {
+        ADT.Tag.doEvent();
+    }
+
+    try {
+        ADT.Tag.loadPTN();
+    } catch (error) {
+        ADTERRORHANDLER.captureError(error);
+        console.log('loadPTN() error', error);
+    }
+    } catch (e) {
+        ADTERRORHANDLER.captureError(e);
+    }
+};
+ADT.Tag.main();
+} catch (e) {
+    ADTERRORHANDLER.captureError(e);
+}

@@ -1,12 +1,11 @@
 from flask import Response, request, make_response, jsonify
-
 from api.http_status import OK, BAD_REQUEST, UNPROCESSABLE_ENTITY, UNAUTHORIZED
 from model.exception import ShopDoesNotExistError, UserSessionIdNotFoundError, UnauthorizedAccessError
 from model.item import ItemHandler
 from spec import DocumentedBlueprint
+import os
 
 item = DocumentedBlueprint('item', __name__)
-
 
 @item.route('/items/findByShopAndCategory', methods=['GET'])
 def find_by_shop_and_category(item_handler: ItemHandler) -> Response:
