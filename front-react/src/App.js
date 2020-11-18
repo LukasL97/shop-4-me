@@ -21,7 +21,9 @@ import Register from './components/auth/Register'
 
 const App = (props) => {
   const [data, setData] = useState([])
+  const [tempData, setTempData] = useState([])
   const [cart, setCart] = useState([])
+  const [notFound, setNotFound] = useState('')
   const [requestData, setRequests] = useState(requests)
   useEffect(() => {
     fetchData()
@@ -44,7 +46,14 @@ const App = (props) => {
       )
     })
     if (search) {
-      setData(filteredData)
+      setTempData(filteredData)
+      setNotFound('')
+      if (filteredData.length === 0) {
+        setNotFound('No product  has been  found')
+      }
+    } else {
+      setTempData(data)
+      setNotFound('')
     }
   }
 
@@ -65,6 +74,7 @@ const App = (props) => {
     setData(data)
     // setRequests()
   }
+  let newData = tempData.length === 0 ? data : tempData
 
   return (
     <Router>
@@ -106,7 +116,8 @@ const App = (props) => {
           path='/'
           component={() => (
             <Home
-              data={data}
+              data={newData}
+              notFound={notFound}
               addItemToCart={addItemToCart}
               removeItemFromCart={removeItemFromCart}
               filterProducts={filterProducts}

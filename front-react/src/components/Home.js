@@ -6,19 +6,18 @@ import Cookies from 'universal-cookie'
 import AvailabilityCalendar from './Calendar'
 import TextInputField from './shared/TextInputField'
 
-const Home = ({ data, addItemToCart, removeItemFromCart, filterProducts }) => {
+const Home = ({
+  data,
+  addItemToCart,
+  removeItemFromCart,
+  filterProducts,
+  notFound,
+}) => {
   const [value, setValue] = useState('')
   const onChange = (e) => {
     e.preventDefault()
     setValue(e.target.value)
   }
-  const onInput = (e) => {
-    filterProducts(value)
-  }
-
-  useEffect(() => {
-    filterProducts(value)
-  }, [data, filterProducts])
 
   const onSubmit = (e) => {
     e.preventDefault()
@@ -52,14 +51,13 @@ const Home = ({ data, addItemToCart, removeItemFromCart, filterProducts }) => {
             name='search'
             value={value}
             onChange={onChange}
-            onInput={onInput}
             autoFocus
             placeholder='Search products by name, category, description ..'
           />
           <button className='btn'>Search</button>
         </form>
       </div>
-      {renderContent}
+      {notFound ? <p>{notFound}</p> : renderContent}
     </Layout>
   )
 }
