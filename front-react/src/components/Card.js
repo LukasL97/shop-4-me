@@ -9,7 +9,13 @@ const buttonStyles = {
 }
 
 const Card = ({
-  item: { name, price, id, image, details },
+  item: {
+    name,
+    price,
+    id,
+    image,
+    details: { description },
+  },
   addItemToCart,
   removeItemFromCart,
   index,
@@ -24,6 +30,7 @@ const Card = ({
         </div>
         <div>
           <h2>{name}</h2>
+          <small className='product-description'>{description}</small>
         </div>
       </Link>
       <div>
