@@ -5,6 +5,7 @@ import PropTypes from 'prop-types'
 import '../assets/styles/navbar.scss'
 import Button from './Button'
 import { getAccessToken, deleteCookie } from '../utils/cookies'
+import Cookies from 'universal-cookie'
 
 const Navbar = (props) => {
   const [auth, setAuth] = useState('')
@@ -23,6 +24,8 @@ const Navbar = (props) => {
     deleteCookie()
     return <Redirect to='/login' />
   }
+
+  const is_SO = new Cookies().get('user_type') === 'ShopOwner'
 
   return (
     <div className='menu'>
@@ -55,7 +58,7 @@ const Navbar = (props) => {
             </NavLink>
           </li>
         )}
-        {auth && (
+        {is_SO && auth && (
           <li>
             <NavLink exact activeClassName='active' to='/add-shop'>
               Add Shop

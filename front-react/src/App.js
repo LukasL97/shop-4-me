@@ -129,7 +129,11 @@ const App = (props) => {
 		  onlyFor='ShopOwner'
           component={(props) => <AddItem {...props} fetchData={fetchData} />}
         />
-        <PrivateRoute path='/add-shop' component={(props) => <AddShop {...props} />} />
+        <PrivateRoute
+		  path='/add-shop' 
+		  onlyFor='ShopOwner'
+		  omponent={(props) => <AddShop {...props} />}
+		/>
 
         <Route
           exact
