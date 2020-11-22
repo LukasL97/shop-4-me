@@ -111,7 +111,7 @@ const Login = (props) => {
               </button>{' '}
               {}
               <NavLink className='button is-link' to='/register'>
-                Register
+                No account yet?
               </NavLink>
             </div>
           </div>

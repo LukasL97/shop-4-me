@@ -70,7 +70,7 @@ const Register = (props) => {
     }
 
     if (formData.touched.firstName && validator.isEmpty(formData.firstName)) {
-      errors.firstName = 'Last name is required'
+      errors.firstName = 'First name is required'
     }
 
     // last name
@@ -90,11 +90,12 @@ const Register = (props) => {
 
     // Email
 
-    if (formData.touched.email && !validator.isEmail(formData.email)) {
-      errors.email = 'It must be a valid email'
-    }
-    if (formData.touched.email && validator.isEmpty(formData.email)) {
-      errors.email = 'Email is required'
+    if (formData.touched.email) {
+      if (!formData.email || validator.isEmpty(formData.email)) {
+        errors.email = 'Email is required'
+      } else if (!validator.isEmail(formData.email)) {
+        errors.email = 'It must be a valid email'
+      }
     }
 
     if (formData.touched.password && validator.isEmpty(formData.password)) {
@@ -304,7 +305,7 @@ const Register = (props) => {
                 Register
               </button>{' '}
               <NavLink className='button is-link' to='/login'>
-                Login
+                Already have an account?
               </NavLink>
             </div>
           </div>
