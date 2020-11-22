@@ -124,7 +124,8 @@ const App = (props) => {
           component={(props) => <Requests {...props} requests={requestData} />}
         />
         <PrivateRoute
-          path='/add-product'
+		  path='/add-product'
+		  onlyFor='ShopOwner'
           component={(props) => <AddItem {...props} fetchData={fetchData} />}
         />
 
