@@ -22,8 +22,14 @@ import Cookies from 'universal-cookie'
 
 const App = (props) => {
   const [data, setData] = useState([])
+  const [tempData, setTempData] = useState([])
   const [cart, setCart] = useState([])
+<<<<<<< HEAD
   const [requestData, setRequests] = useState([])
+=======
+  const [notFound, setNotFound] = useState('')
+  const [requestData, setRequests] = useState(requests)
+>>>>>>> origin/master
   useEffect(() => {
     fetchData()
     const cartStr = JSON.stringify(cart)
@@ -31,6 +37,30 @@ const App = (props) => {
   }, [cart])
 
   const addItemToCart = (item) => setCart([...cart, item])
+  const filterProducts = (search) => {
+    const filteredData = data.filter((item) => {
+      const {
+        name,
+        category,
+        details: { description },
+      } = item
+      return (
+        name.toLowerCase().includes(search) ||
+        category.toLowerCase().includes(search) ||
+        description.toLowerCase().includes(search)
+      )
+    })
+    if (search) {
+      setTempData(filteredData)
+      setNotFound('')
+      if (filteredData.length === 0) {
+        setNotFound('No product  has been  found')
+      }
+    } else {
+      setTempData(data)
+      setNotFound('')
+    }
+  }
 
   const removeItemFromCart = (index) => {
     const cartItems = [...cart]
@@ -67,6 +97,7 @@ const App = (props) => {
 		setRequests(own_requests)
 	}
   }
+  let newData = tempData.length === 0 ? data : tempData
 
   return (
     <Router>
@@ -98,7 +129,10 @@ const App = (props) => {
           path='/requests'
           component={(props) => <Requests {...props} requests={requestData} />}
         />
-        <PrivateRoute path='/add-product' component={(props) => <AddItem />} />
+        <PrivateRoute
+          path='/add-product'
+          component={(props) => <AddItem {...props} fetchData={fetchData} />}
+        />
         <PrivateRoute path='/add-shop' component={(props) => <AddShop {...props} />} />
 
         <Route
@@ -106,9 +140,11 @@ const App = (props) => {
           path='/'
           component={() => (
             <Home
-              data={data}
+              data={newData}
+              notFound={notFound}
               addItemToCart={addItemToCart}
               removeItemFromCart={removeItemFromCart}
+              filterProducts={filterProducts}
             />
           )}
         />

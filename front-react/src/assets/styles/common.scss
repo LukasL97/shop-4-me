@@ -14,7 +14,7 @@ body {
 .header-wrapper,
 .main-wrapper,
 .footer-wrapper {
-  margin:auto;
+  margin: auto;
   width: 80%;
 }
 
@@ -60,4 +60,8 @@ ul li a {
 small {
   font-size: 18px !important;
   font-family: 'Roboto' !important;
+}
+
+.search {
+  margin: 25px auto;
 }
