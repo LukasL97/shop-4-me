@@ -38,7 +38,7 @@ const AddShop = (props) => {
 	
       props.history.push('/')
 	}
-	return (<>
+	return (
 		<Layout>
 		  <div className='add-item-container'>
 			<form onSubmit={onSubmit} noValidate>
@@ -83,8 +83,7 @@ const AddShop = (props) => {
 			  </button>
 			</form>
 		  </div>
-		</Layout>
-	</>)
+		</Layout>)
 }
 
 export default AddShop

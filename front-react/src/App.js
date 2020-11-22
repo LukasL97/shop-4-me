@@ -132,7 +132,7 @@ const App = (props) => {
         <PrivateRoute
 		  path='/add-shop' 
 		  onlyFor='ShopOwner'
-		  omponent={(props) => <AddShop {...props} />}
+		  component={(props) => <AddShop {...props} />}
 		/>
 
         <Route
