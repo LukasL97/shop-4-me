@@ -22,11 +22,12 @@ const Request = (props) => {
     return <div>{/* <p>{props.request.id}</p> */}</div>
   } else {
     const {
-      date,
       request: {
+		submissionDate,
         id,
         requester,
-        items,
+		items,
+		status,
         deliveryAddress: {
           street,
           zip,
@@ -45,7 +46,7 @@ const Request = (props) => {
           <summary className='request-summary'>
             <span className='date'>
               {' '}
-              {moment(date).format('DD/MM/YYYY HH:mm A')}{' '}
+              {moment(submissionDate).format('DD/MM/YYYY HH:mm A')}{' '}
             </span>
             <span className=''> Requested by {requester}</span>
             <span className='total-price'>{totalPrice} EURO</span>
@@ -63,7 +64,7 @@ const Request = (props) => {
             </div>
           </div>
           {
-          new Cookies().get('user_type') == 'Volunteer' ?
+          new Cookies().get('user_type') == 'Volunteer' && status == 1 ?
             <button className='button is-link' onClick={(event) => accept(event, id)}> Accept </button> :
             <div></div>
           }
