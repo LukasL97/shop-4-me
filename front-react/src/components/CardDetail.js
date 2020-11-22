@@ -4,7 +4,14 @@ import Layout from './Layout'
 
 const CardDetail = (props) => {
   const id = props.match.params.id
-  const { name, image, price } = props.data.find((item) => item.id == id)
+  console.log(props)
+  const {
+    name,
+    image,
+    price,
+    image: { url },
+    details: { description },
+  } = props.data.find((item) => item.id == id)
 
   if (!name) {
     return <h1>Loading...</h1>
@@ -14,18 +21,13 @@ const CardDetail = (props) => {
     <Layout>
       <div className='card'>
         <div className='card-image'>
-          <img src={image.url} alt='' />
+          <img src={url} alt='' />
         </div>
         <div>
           <h2>{name}</h2>
         </div>
         <div>
-          <p>
-            Lorem ipsum dolor sit amet consectetur adipisicing elit. Dolorum
-            nesciunt maiores quas asperiores non itaque fuga nostrum molestiae
-            voluptates corrupti modi, aliquid a nulla quia! Repellat quo fuga
-            itaque corrupti.
-          </p>
+          <p>{description}</p>
         </div>
 
         <div className='card-footer'>
