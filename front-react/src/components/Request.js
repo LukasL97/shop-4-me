@@ -38,7 +38,7 @@ const Request = (props) => {
     const itemList = items.map(
 	  ({item, amount}) => <li key={item.id}>{amount}x {item.name}</li>
 	)
-    const totalPrice = items.reduce((acc, cur) => acc + Number(cur.amount), 0)
+    const totalPrice = items.reduce((acc, cur) => acc + Number(cur.item.price), 0)
 
     return (
       <div className='request-card'>

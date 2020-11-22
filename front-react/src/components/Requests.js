@@ -47,13 +47,13 @@ const VolunteerRequests = (props) => {
     <>
     <h2>Open requests</h2>
     <div>
-      {open_requests.filter((req) => req.status === 1).map((request) => (
+      {open_requests.filter((req) => req.status === SUBMITTED).map((request) => (
         <Request request={request} />
       ))}
     </div>
     <h2>Closed requests</h2>
     <div>
-      {open_requests.filter((req) => req.status === 2).map((request) => (
+      {open_requests.filter((req) => req.status === ACCEPTED).map((request) => (
         <Request request={request} />
       ))}
     </div>
