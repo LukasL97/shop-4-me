@@ -28,13 +28,15 @@ const Request = (props) => {
         requester,
         items,
         deliveryAddress: {
-          streetName,
+          street,
           zip,
           coordinates: { lat, lng },
         },
       },
     } = props
-    const itemList = items.map((item) => <li>{item.name}</li>)
+    const itemList = items.map(
+	  ({item, amount}) => <li key={item.id}>{amount}x {item.name}</li>
+	)
     const totalPrice = items.reduce((acc, cur) => acc + Number(cur.amount), 0)
 
     return (
@@ -49,7 +51,7 @@ const Request = (props) => {
             <span className='total-price'>{totalPrice} EURO</span>
           </summary>
           <div>
-            <p>Street Name: {streetName}</p>
+            <p>Street: {street}</p>
             <p>Zipcode: {zip}</p>
             <p>
               {' '}

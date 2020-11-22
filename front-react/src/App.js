@@ -22,7 +22,7 @@ import Cookies from 'universal-cookie'
 const App = (props) => {
   const [data, setData] = useState([])
   const [cart, setCart] = useState([])
-  const [requestData, setRequests] = useState([])
+  const [requestData, setRequests] = useState({own: [], open: []})
   useEffect(() => {
     fetchData()
     const cartStr = JSON.stringify(cart)
@@ -62,8 +62,7 @@ const App = (props) => {
 			sessionId: cookies.get('access_token')
 		})).data
 		
-		own_requests.push(...open_requests)
-		setRequests(own_requests)
+		setRequests({own: own_requests, open: open_requests})
 	}
   }
 
