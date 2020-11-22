@@ -12,12 +12,12 @@ const CartCard = (props) => {
       <div className='cart-card-image'>
         <img src={props.item.image.url} alt='' />
       </div>
-      <div>
+      <div style={{'margin-left': '300px'}}>
         <p> {props.item.name}</p>
         <small>Price: {props.item.price} euro</small>
       </div>
 
-      <div>
+      <div style={{'margin-left': '300px'}}>
         <button
           onClick={() => props.removeItemFromCart(props.index)}
           style={buttonStyles}
