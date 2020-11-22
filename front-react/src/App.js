@@ -16,6 +16,7 @@ import CartCards from './components/CartCards'
 import Requests from './components/Requests'
 import { useFetch } from './services/useFetch'
 import AddItem from './components/AddItem'
+import AddShop from './components/AddShop'
 import Register from './components/auth/Register'
 import Cookies from 'universal-cookie'
 
@@ -128,6 +129,7 @@ const App = (props) => {
 		  onlyFor='ShopOwner'
           component={(props) => <AddItem {...props} fetchData={fetchData} />}
         />
+        <PrivateRoute path='/add-shop' component={(props) => <AddShop {...props} />} />
 
         <Route
           exact
