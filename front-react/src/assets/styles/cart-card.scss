@@ -12,7 +12,9 @@
     margin: 20px 0 5px 0;
   }
   .cart-card-image img {
-    max-width: 300px;
+	max-width: 300px;
+	max-height: 110px;
+	float: left;
   }
   .card-footer {
     display: flex;
