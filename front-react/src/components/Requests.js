@@ -61,7 +61,7 @@ const VolunteerRequests = (props) => {
   ) : <></>
   
   return (
-    <Layout>
+	<>
       <h2>Accepted requests</h2>
       {own_requests.length ? (
         <div>
@@ -75,7 +75,7 @@ const VolunteerRequests = (props) => {
         </div>
       )}
 	  {OpenRequests}
-    </Layout>
+	</>
   )
 }
 
