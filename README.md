@@ -1,29 +1,77 @@
-# README #
+# Shop4me Application
 
-This README would normally document whatever steps are necessary to get your application up and running.
+## Description
 
-### What is this repository for? ###
+Shop4me allows users to request a product in a shop. Volunteers can deliver the requested products to the requester.
 
-* Quick summary
-* Version
-* [Learn Markdown](https://bitbucket.org/tutorials/markdowndemo)
+## Technologies
 
-### How do I get set up? ###
+The technologies used to develop the shop4me application.
 
-* Summary of set up
-* Configuration
-* Dependencies
-* Database configuration
-* How to run tests
-* Deployment instructions
+### Front
 
-### Contribution guidelines ###
+- HTML
+- CSS
+- Sass
+- JS
+- React
 
-* Writing tests
-* Code review
-* Other guidelines
+### Back End
 
-### Who do I talk to? ###
+- Python
+- Flask
+- MongoDB
+- Cloudinary(to store images)
 
-* Repo owner or admin
-* Other community or team contact
+## How to run the application
+
+### On Windows
+
+First start the front end application, using the following commands. From the project directory run do the following steps
+
+```sh
+cd front-react
+yarn install
+yarn start
+```
+
+From the project directory run the following commands to activate the virtual environment
+
+```sh
+cd back-flask
+cd env
+cd Scripts
+. activate
+```
+
+Return to the back-flask directory and run and start the back end by writing
+
+```sh
+export FLASK_APP=main.py
+python -m flask run
+```
+
+### On Linux and MacOs
+
+First start the front end application, using the following commands. From the project directory run do the following steps
+
+```sh
+cd front-react
+yarn install
+yarn start
+```
+
+From the project directory run the following commands to activate the virtual environment
+
+```sh
+cd back-flask
+cd env
+source env/bin/activate
+```
+
+Return to the back-flask directory and run and start the back end by writing
+
+```sh
+export FLASK_APP=main.py
+python -m flask run
+```
